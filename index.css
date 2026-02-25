@@ -1,0 +1,57 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0px;
+  padding: 0px;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.header {
+  height: 45px;
+  padding: 10px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+.content {
+  height: calc(100vh - 45px);
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+}
+.doc {
+  height: 100%;
+  padding: 10px;
+  overflow: scroll;
+}
+.app {
+  padding: 10px;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.editor {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+textarea {
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+.preview {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px groove;
+  overflow: scroll;
+}
+.preview div {
+  margin: auto;
+}
