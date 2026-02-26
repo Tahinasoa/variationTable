@@ -1,6 +1,7 @@
 import VariationTable from './variationTable/VariationTable';
 import Editor from './Editor';
 import { useEffect, useState } from 'react';
+import { examples } from './examples';
 
 function App() {
   const [input, setInput] =
@@ -40,12 +41,3 @@ function App() {
   );
 }
 export default App;
-
-let examples: Record<string, string> = {
-  '2.1': `header "$x$": "-infty","$0$","+infty"
-  row "signe de $f'$": "+" "-"
-  row "variation de $f$": INC DEC`,
-  '3.1': `header "$x$": "-infty","$0$","+infty"
-  row "signe de f'": "$+$" "$-$"
-  row "variation de f(x)": INC &{top-center:"5", bottom-center:"4"}DEC  `,
-};
