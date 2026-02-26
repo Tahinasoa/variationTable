@@ -6,6 +6,8 @@ import { Variable } from "./Variable";
 import { useEffect, useRef } from "react";
 import { Signs } from "./Signs";
 import { SeparatorLabels } from "./SeparatorLabels";
+import renderMathInElement from "katex/dist/contrib/auto-render";
+import 'katex/dist/katex.min.css';
 
 export function KatexLayer({
   tableData,
@@ -25,7 +27,7 @@ export function KatexLayer({
     if (!katexLayerRef.current) return;
 
     try {
-      window.renderMathInElement(katexLayerRef.current, {
+      renderMathInElement(katexLayerRef.current, {
         delimiters: [
           { left: "$$", right: "$$", display: true },
           { left: "$", right: "$", display: false },
