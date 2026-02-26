@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Variation table DSL</title>
+    <script type="module" crossorigin src="/variationTable/assets/index-C4PWhvvN.js"></script>
+    <link rel="stylesheet" crossorigin href="/variationTable/assets/index-BlP0nX7Y.css">
+  </head>
+
+  <body>
+    <h1 class="header">Variation Table DSL (VT-DSL)</h1>
+    <div class="content">
+      <div class="doc">
+        <h1 id="vt-dsl">VT-DSL</h1>
+        <ol start="">
+          <li><a href="#1-overview">Overview</a></li>
+          <li><a href="#2-general-syntax">General Syntax</a></li>
+          <li><a href="#3-row-content">Row Content</a></li>
+          <li><a href="#4-examples">Examples</a></li>
+          <li><a href="#5-whats-next">What&#39;s Next?</a></li>
+        </ol>
+        <hr />
+        <h2 id="1-overview">1. Overview</h2>
+        <p>
+          VT-DSL is a domain-specific language for describing variation and sign
+          tables.
+        </p>
+        <p>It is designed to be:</p>
+        <ul>
+          <li>Human-readable</li>
+          <li>AI-friendly for generation and parsing</li>
+          <li>Structurally regular while semantically flexible</li>
+        </ul>
+        <p>
+          The DSL describes <strong>table structure</strong>, not mathematical
+          correctness.
+        </p>
+        <hr />
+        <h2 id="2-general-syntax">2. General Syntax</h2>
+        <pre><code>header [var] : [domain-values]
+  row [row-label] [/height] : [row-content]
+  ...
+  </code></pre>
+
+        <button class="try-it" data-example-id="2.1">
+          Try it &gt;&gt;&gt;
+        </button>
+        <p>
+          A file must contain exactly one <code>header</code>, followed by zero
+          or more <code>row</code> declarations. All bracketed components are
+          optional.
+        </p>
+        <p>
+          <strong>Header</strong> — defines the first row; must come before any
+          <code>row</code>.
+        </p>
+        <ul>
+          <li>
+            <code>var</code> — variable name, quoted string, plaint text or
+            Latex (use <code>$</code> as delimiter ), e.g.
+            <code>&quot;$x$&quot;</code>
+          </li>
+          <li>
+            <code>domain-values</code> — comma-separated list of quoted strings;
+            determines the column count, e.g.
+            <code>&quot;$-\infty$&quot;</code>, <code>&quot;$0$&quot;</code>,
+            <code>&quot;$+\infty$&quot;</code>
+          </li>
+        </ul>
+        <p><strong>Row</strong> — defines one horizontal row of the table.</p>
+        <ul>
+          <li>
+            <code>row-label</code> — label displayed on the left, quoted string,
+            e.g.
+            <code>&quot;sign of f&#39;&quot;</code>
+          </li>
+          <li>
+            <code>/height</code> — relative height multiplier, &quot;/&quot;
+            followed by a number, e.g. <code>/2</code> (double height),
+            <code>/1.5</code> (one and a half)
+          </li>
+          <li>
+            <code>row-content</code> — sequence of cell content and cell
+            separators (see §3)
+          </li>
+        </ul>
+        <hr />
+        <h2 id="3-row-content">3. Row Content</h2>
+        <p>
+          Row content is a flat sequence of <strong>separators</strong> and
+          <strong>content tokens</strong>, in any order, with no commas between
+          them.
+        </p>
+        <p><strong>Separators</strong> — vertical boundaries between cells.</p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th>Syntax</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&amp;</code></td>
+                <td>invisible delimiter</td>
+              </tr>
+              <tr>
+                <td><code>|&amp;</code></td>
+                <td>single bar</td>
+              </tr>
+              <tr>
+                <td><code>||&amp;</code></td>
+                <td>double bar</td>
+              </tr>
+              <tr>
+                <td><code>:&amp;</code></td>
+                <td>dashed</td>
+              </tr>
+              <tr>
+                <td><code>::&amp;</code></td>
+                <td>double dashed</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <p>
+          Labels can be attached to a separator :
+          <code
+            >&amp;{top-center:&quot;$x_0$&quot;,
+            bottom-right:&quot;$y_0$&quot;}</code
+          >. Valid positions: <code>top-left</code>, <code>top-center</code>,
+          <code>top-right</code>, <code>center-left</code>,
+          <code>center-center</code>, <code>center-right</code>,
+          <code>bottom-left</code>, <code>bottom-center</code>,
+          <code>bottom-right</code>.
+        </p>
+        <button class="try-it" data-example-id="3.1">
+          Try it &gt;&gt;&gt;
+        </button>
+        <p><strong>Content tokens</strong> — what appears inside a cell.</p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&quot;...&quot;</code></td>
+                <td>literal text or LaTeX</td>
+              </tr>
+              <tr>
+                <td><code>INC</code></td>
+                <td>increasing arrow</td>
+              </tr>
+              <tr>
+                <td><code>DEC</code></td>
+                <td>decreasing arrow</td>
+              </tr>
+              <tr>
+                <td><code>CONST</code></td>
+                <td>constant (horizontal)</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <p>
+          <code>CONST</code> command is not yet fully implemented by the render
+        </p>
+        <p>
+          All commands accept optional <code>{key:value, ...}</code> options
+          separated by &#39;,&#39;:
+        </p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Values</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>colSpan</code></td>
+                <td>positive number</td>
+                <td><code>1</code></td>
+              </tr>
+              <tr>
+                <td><code>arrow</code> <em>(for INC, DEC and CONST )</em></td>
+                <td>
+                  <code>start</code>, <code>end</code>, <code>both</code>,
+                  <code>none</code>
+                </td>
+                <td><code>end</code></td>
+              </tr>
+              <tr>
+                <td><code>vPos</code> <em>(for CONST )</em></td>
+                <td>
+                  <code>top</code>, <code>center</code>, <code>bottom</code>
+                </td>
+                <td><code>center</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <button class="try-it" data-example-id="3.2">
+          Try it &gt;&gt;&gt;
+        </button>
+        <p>
+          <strong>Implicit separator rule</strong> — if separators are omitted,
+          empty separators <code>&amp;</code> are inserted implicitly between
+          tokens. So <code>INC DEC</code> is equivalent to
+          <code>&amp; INC &amp; DEC &amp;</code>.
+        </p>
+        <p>
+          The DSL intentionally supports incomplete, incorrect, or ambiguous
+          content — this is valid by design.
+        </p>
+        <hr />
+        <h2 id="4-examples">4. Examples</h2>
+        <p>
+          The examples bellow mainly show how VT-DSL handles incorrect or
+          incomplete variation/sign table.
+        </p>
+        <p>
+          <strong>Example 1 :</strong> one row is skipped
+          <button class="try-it" data-example-id="4.1">
+            Try it &gt;&gt;&gt;
+          </button>
+        </p>
+        <p>
+          <strong>Example 2:</strong> multiple labels attached to a separator
+          <button class="try-it" data-example-id="4.2">
+            Try it &gt;&gt;&gt;
+          </button>
+        </p>
+        <p>
+          <strong>Example 3:</strong> mixed content type
+          <button class="try-it" data-example-id="4.3">
+            Try it &gt;&gt;&gt;
+          </button>
+        </p>
+        <hr />
+        <h2 id="5-whats-next">5. What&#39;s Next?</h2>
+        <ul>
+          <li>
+            support for <code>FORBIDEN</code> command to specify that a function
+            is not defined on a given interval.
+          </li>
+          <li>support for values on an arrow</li>
+        </ul>
+        <!-- doc end-->
+      </div>
+      <div id="app" class="app"></div>
+    </div>
+  </body>
+</html>

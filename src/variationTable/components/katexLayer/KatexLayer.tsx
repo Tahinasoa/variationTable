@@ -6,7 +6,7 @@ import { Variable } from "./Variable";
 import { useEffect, useRef } from "react";
 import { Signs } from "./Signs";
 import { SeparatorLabels } from "./SeparatorLabels";
-import renderMathInElement from "katex/dist/contrib/auto-render";
+import renderMathInElement from 'katex/dist/contrib/auto-render.mjs';
 import 'katex/dist/katex.min.css';
 
 export function KatexLayer({

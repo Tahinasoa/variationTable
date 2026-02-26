@@ -51,6 +51,10 @@ export interface VariationArrow {
   startColumn: number;
   endColumn: number;
   row: number;
+  topOffset: number;
+  bottomOffset: number ;
+
+
 }
 
 export interface Sign {
