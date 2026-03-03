@@ -1,0 +1,27 @@
+name: Deploy variationTable to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Déclenche le déploiement lors d'un push sur la branche main
+
+permissions:
+  contents: write  # Nécessaire pour pousser les fichiers vers la branche gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build # Le dossier généré (utilisez 'dist' si vous utilisez Vite)
+          branch: gh-pages # La branche cible pour l'hébergement
