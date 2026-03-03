@@ -37,7 +37,7 @@ row : INC{arrow:"start"} CONST{arrow:"none", vPos:"bottom"} DEC{arrow:"both"}`
 examples["5.3"] = 
 `header : $-\\infty$,$0$,$+\\infty$
 row/2 : &{bottom-right:$-\\infty$} INC |&{top:$-1$} DEC &{bottom-left:$-\\infty$}`
-examples["5.4"] = 
+examples["6.1"] = 
 `header : $-\\infty$,$-1$,$+1$, $+\\infty$
 row : "text"{colSpan:2} INC
       row : UNDEF{colSpan:3}
