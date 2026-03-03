@@ -3,10 +3,12 @@ name: Deploy variationTable to GitHub Pages
 on:
   push:
     branches:
-      - main  # Déclenche le déploiement lors d'un push sur la branche main
+      - main
 
 permissions:
-  contents: write  # Nécessaire pour pousser les fichiers vers la branche gh-pages
+  contents: write # Essential for pushing to the gh-pages branch
+  pages: write    # Signals this is a GitHub Pages job
+  id-token: write # Required for modern secure OIDC authentication
 
 jobs:
   build-and-deploy:
@@ -23,5 +25,6 @@ jobs:
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build # Le dossier généré (utilisez 'dist' si vous utilisez Vite)
-          branch: gh-pages # La branche cible pour l'hébergement
+          # IMPORTANT: Use 'dist' if you use Vite, or 'build' if you use Create React App
+          folder: dist 
+          branch: gh-pages
