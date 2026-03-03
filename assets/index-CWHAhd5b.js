@@ -285,7 +285,7 @@ row : + UNDEF +
 row : UNDEF SKIP UNDEF`;pt["5.1"]=`header : $-\\infty$,$-1$, $+1$,$+\\infty$
 row : INC CONST DEC`;pt["5.2"]=`header : $-\\infty$,$-1$, $+1$,$+\\infty$
 row : INC{arrow:"start"} CONST{arrow:"none", vPos:"bottom"} DEC{arrow:"both"}`;pt["5.3"]=`header : $-\\infty$,$0$,$+\\infty$
-row/2 : &{bottom-right:$-\\infty$} INC |&{top:$-1$} DEC &{bottom-left:$-\\infty$}`;pt["5.4"]=`header : $-\\infty$,$-1$,$+1$, $+\\infty$
+row/2 : &{bottom-right:$-\\infty$} INC |&{top:$-1$} DEC &{bottom-left:$-\\infty$}`;pt["6.1"]=`header : $-\\infty$,$-1$,$+1$, $+\\infty$
 row : "text"{colSpan:2} INC
       row : UNDEF{colSpan:3}
       row : DEC{arrow:"none", colSpan:2} CONST`;function lm(){const[u,l]=nl.useState(pt.default);return nl.useEffect(()=>{function r(i){let c=(i.target||null)?.closest(".try-it");if(c){let o=c.dataset.exampleId;o&&o in pt&&l(pt[o])}}return document.addEventListener("click",r),()=>{document.removeEventListener("click",r)}},[]),me.jsxs(me.Fragment,{children:[me.jsx("div",{className:"editor",children:me.jsx(am,{input:u,setInput:l})}),me.jsx("div",{className:"preview",children:me.jsx(em,{inputText:u})})]})}Nh.createRoot(document.getElementById("app")).render(me.jsx(nl.StrictMode,{children:me.jsx(lm,{})}));
