@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Variation table DSL</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body>
+    <h1 class="header">Variation Table DSL (VT-DSL)</h1>
+    <div class="content">
+      <div class="doc">
+        <h1 id="vt-dsl">VT-DSL</h1>
+        <ol start="">
+          <li><a href="#1-overview">Overview</a></li>
+          <li><a href="#2-general-syntax">General Syntax</a></li>
+          <li><a href="#3-separators">Separators</a></li>
+          <li>
+            <a href="#4-undefined-and-skipped-regions"
+              >Undefined and Skipped Regions</a
+            >
+          </li>
+          <li><a href="#5-variations">Variations</a></li>
+          <li><a href="#6-multicolumn-content">Multicolumn Content</a></li>
+        </ol>
+        <hr />
+        <h2 id="1-overview">1. Overview</h2>
+        <p>
+          VT-DSL is a domain-specific language for describing variation and sign
+          tables. It is designed to be:
+        </p>
+        <ul>
+          <li><strong>Human-readable</strong></li>
+          <li><strong>AI-friendly</strong> for generation and parsing</li>
+          <li>
+            <strong>Structurally regular</strong> while semantically flexible
+          </li>
+        </ul>
+        <p>
+          The DSL describes <strong>table structure</strong>, not mathematical
+          correctness.
+        </p>
+        <h2 id="2-general-syntax">2. General Syntax</h2>
+        <pre><code class='language-vtdsl' lang='vtdsl'>header [var] : [domain]
+      row [row-label] [/height] : [row-content]
+      ...
+      </code></pre>
+        <p>
+          A file must contain exactly one <code>header</code>, followed by zero
+          or more <code>row</code> declarations. All bracketed components are
+          optional.
+        </p>
+        <p>
+          <strong><code>header</code></strong> — defines the first row; must
+          come before any <code>row</code>.
+        </p>
+        <ul>
+          <li>
+            <strong><code>var</code></strong
+            >: Defines the variable name.
+          </li>
+          <li>
+            <strong><code>domain</code></strong
+            >: Defines the boundaries and values, separated by commas
+            (<code>,</code>).
+          </li>
+        </ul>
+        <p>
+          Values can be <strong>text</strong> (delimited by
+          <code>&#39;</code> or <code>&quot;</code>) or
+          <strong>math</strong> (delimited by <code>$</code>). You can nest math
+          inside text quotes: <code>&quot;variation of $\abs{x}$&quot;</code>.
+        </p>
+        <pre><code class='language-vtdsl' lang='vtdsl'>header $x$ : $-\infty$, $0$, $+\infty$
+      </code></pre>
+        <p><button class="try-it" data-example-id="2.1">try it</button></p>
+        <p>
+          <strong><code>row</code></strong> — defines a horizontal row.
+        </p>
+        <ul>
+          <li>
+            <strong><code>row-label</code></strong
+            >: label of the row, placed at the first column, e.g.,
+            <code>&quot;sign of $f&#39;(x)$&quot;</code>.
+          </li>
+          <li>
+            <strong><code>/height</code></strong
+            >: Relative height multiplier, e.g., <code>/2</code>.
+          </li>
+          <li>
+            <strong><code>row-content</code></strong
+            >: Sequence of cell contents (text, math,signs, ...) and separators.
+          </li>
+        </ul>
+        <p>
+          Signs <code>+</code> and <code>-</code> are
+          <strong>native tokens</strong> and do not require quotes.
+        </p>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row &quot;sign of $f&#39;(x)$&quot; /1.5 : + -
+      </code></pre>
+        <p><button class="try-it" data-example-id="2.2">try it</button></p>
+        <h2 id="3-separators">3. Separators</h2>
+        <p>
+          Separators describe vertical lines between cells. They are optional.
+        </p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th>Syntax</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&amp;</code></td>
+                <td>Invisible separator</td>
+              </tr>
+              <tr>
+                <td><code>|&amp;</code></td>
+                <td>single bar</td>
+              </tr>
+              <tr>
+                <td><code>||&amp;</code></td>
+                <td>double bar</td>
+              </tr>
+              <tr>
+                <td><code>:&amp;</code></td>
+                <td>Dashed</td>
+              </tr>
+              <tr>
+                <td><code>::&amp;</code></td>
+                <td>Double dashed</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row  : ::&amp; + :&amp; - |&amp;
+      row  : -&amp; + &amp; - ||&amp;
+      </code></pre>
+        <p>
+          <button class="try-it" data-example-id="3.1">try it</button> Labels
+          can be attached to a separator using
+          <code>&amp;{position:value}</code>. There are 9 positions:
+        </p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th><code>top-left</code></th>
+                <th><code>top-center</code> (alias <code>top</code>)</th>
+                <th><code>top-right</code></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>center-left</code></td>
+                <td><code>center-center</code> (alias <code>center</code>)</td>
+                <td><code>center-right</code></td>
+              </tr>
+              <tr>
+                <td><code>bottom-left</code></td>
+                <td><code>bottom-center</code> (alias <code>bottom</code>)</td>
+                <td><code>bottom-right</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : + |&amp;{top-left:&quot;top-left&quot;, bottom-right:&quot;bottom-right&quot;} -
+      row : + |&amp;{center:$0$} -
+      </code></pre>
+        <p><button class="try-it" data-example-id="3.2">try it</button></p>
+        <h2 id="4-undefined-and-skipped-regions">
+          4. Undefined and Skipped Regions
+        </h2>
+        <ul>
+          <li>
+            <strong><code>UNDEF</code></strong
+            >: Renders a hashed region where a function is not defined.
+          </li>
+          <li>
+            <strong><code>SKIP</code></strong
+            >: Skips a cell entirely; nothing is drawn, and the next content
+            moves to the next cell.
+          </li>
+        </ul>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : + UNDEF +
+      row : UNDEF SKIP UNDEF
+      </code></pre>
+        <p><button class="try-it" data-example-id="4.1">try it</button></p>
+        <h2 id="5-variations">5. Variations</h2>
+        <p>Three commands describe function variation:</p>
+        <figure class="table-figure">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>INC</code></td>
+                <td>Increasing arrow</td>
+              </tr>
+              <tr>
+                <td><code>DEC</code></td>
+                <td>Decreasing arrow</td>
+              </tr>
+              <tr>
+                <td><code>CONST</code></td>
+                <td>Constant (horizontal)</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : INC CONST DEC
+      </code></pre>
+        <p>
+          <button class="try-it" data-example-id="5.1">try it</button>
+          <strong>Options:</strong>
+        </p>
+        <ul>
+          <li>
+            <strong><code>arrow</code></strong
+            >: Set head to <code>&quot;start&quot;</code>,
+            <code>&quot;end&quot;</code>, <code>&quot;both&quot;</code>, or
+            <code>&quot;none&quot;</code>.
+          </li>
+          <li>
+            <strong><code>vPos</code></strong
+            >: (For <code>CONST</code>) Set to <code>&quot;top&quot;</code>,
+            <code>&quot;center&quot;</code>, or <code>&quot;bottom&quot;</code>.
+          </li>
+        </ul>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : INC{arrow:&quot;start&quot;} CONST{arrow:&quot;none&quot;, vPos:&quot;bottom&quot;} DEC{arrow:&quot;both&quot;}
+      </code></pre>
+        <p><button class="try-it" data-example-id="5.2">try it</button></p>
+        <p>
+          <strong>Extrema and Limits:</strong> we can specify extrema and limits
+          by attaching them to a separator
+        </p>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : &amp;{bottom-right:$-\infty$} INC |&amp;{top:$-1$} DEC &amp;{bottom-left:$-\infty$}
+      </code></pre>
+        <p><button class="try-it" data-example-id="5.3">try it</button></p>
+        <p>
+          <strong>Note</strong> : Labels on boundary separators must be
+          explicitly aligned inward: use right-aligned positions at the left
+          edge and left-aligned positions at the right edge.
+        </p>
+        <h2 id="6-multicolumn-content">6. Multicolumn Content</h2>
+        <p>
+          Any content type can span multiple columns using the
+          <code>colSpan</code> option. If multiple options are used, separate
+          them with a comma.
+        </p>
+        <pre><code class='language-vtdsl' lang='vtdsl'>row : &quot;text&quot;{colSpan:2} INC
+      row : UNDEF{colSpan:3}
+      row : DEC{arrow:&quot;none&quot;, colSpan:2} CONST
+      </code></pre>
+        <p><button class="try-it" data-example-id="6.1">try it</button></p>
+        <!-- doc end-->
+      </div>
+      <div id="app" class="app"></div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
