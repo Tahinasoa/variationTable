@@ -1,273 +1,173 @@
 // @ts-ignore
-import { parse } from './parser.js';
+import { parse } from './parser.mjs';
 
 import {
   SeparatorType,
   VariationType,
   type ColumnSeparator,
-  type ColumnSeparatorLabel,
-  type HorizontalPosition,
   type RowData,
   type Sign,
   type TableDataArgs,
   type VariationArrow,
-  type VerticalPosition,
-  ForbidenRegion,
+  type ForbidenRegion,
 } from './models/TableData.js';
 
-export interface AstHeader {
-  type: string;
-  variable: string | null;
-  domains: string[];
-}
-export interface AstRowContent {
-  type: string;
-  value: string | null;
-  options: Record<string, string | number> | null;
-}
+import type {
+  TkzTabDocument,
+  TkzTabInit,
+  TkzTabLine,
+  TkzTabVar,
+  LineElementContent,
+  VarElement,
+} from './types.js';
 
-export interface AstRow {
-  type: string;
-  label: string | null;
-  heightMultiplier: number | null;
-  contents: AstRowContent[];
-}
+// ---------------------------------------------------------------------------
+// Parse
+// ---------------------------------------------------------------------------
 
-export interface Ast {
-  type: string;
-  header: AstHeader;
-  rows: AstRow[];
-}
-
-export interface ParseResult {
-  ast?: Ast;
-  error?: string;
-}
-export interface transformationResult {
-  data?: TableDataArgs;
-  error?: string;
-}
-
-export function parseToAst(input: string): ParseResult {
-  let result: ParseResult = {};
-
+export function parseToTableData(input: string): { data?: TableDataArgs; error?: string } {
+  let ast: TkzTabDocument;
   try {
-    const output: Ast = parse(input);
-    result.ast = output;
-  } catch (error) {
-    const err = error as { message?: string };
-    result.error = err.message ?? 'Unknown parse error';
+    ast = parse(input);
+  } catch (e: any) {
+    return { error: e.message ?? 'Unknown parse error' };
   }
-
-  return result;
+  try {
+    return { data: transform(ast) };
+  } catch (e: any) {
+    return { error: e.message ?? 'Unknown transform error' };
+  }
 }
 
-export function astToTableData({
-  ast,
-  error,
-}: ParseResult): transformationResult {
-  if (error || !ast) return { error };
+// ---------------------------------------------------------------------------
+// Transform
+// ---------------------------------------------------------------------------
 
-  let tableDataArgs: TableDataArgs = {
-    variable: ast.header.variable,
-    rowLabels: [],
-    columnHeaders: ast.header.domains,
-    columnSeparators: [],
-    variationArrows: [],
-    signs: [],
-    forbidenRegions : []
-  };
-  ast.rows.forEach((e) => {
-    let rowData: RowData = {
-      content: e.label || '',
-      heightMultiplier: e.heightMultiplier || 1,
-    };
-    tableDataArgs.rowLabels.push(rowData);
-  });
-  for (let i = 0, currentRow = 1; i < ast.rows.length; i++, currentRow++) {
-    let row = ast.rows[i];
+function transform(ast: TkzTabDocument): TableDataArgs {
+  const init = ast.body.find(c => c.type === 'tkzTabInit') as TkzTabInit | undefined;
+  if (!init) throw new Error('No \\tkzTabInit found');
 
-    let currentColumn = 0;
-    let lastContentType: string | null = null;
-    for (let c = 0; c < row.contents.length; c++) {
-      let content = row.contents[c];
-      if (
-        // only skip increment in  the transition:
-        //Separator → non-Separator
-        lastContentType !== 'Separator' ||
-        content.type === 'Separator'
-      ) {
-        currentColumn++;
-      }
-      lastContentType = content.type;
+  const variable     = init.rows[0]?.label.value ?? null;
+  const rowLabels: RowData[] = init.rows.slice(1).map(r => ({
+    content: r.label.value,
+    heightMultiplier: r.height,
+  }));
+  const columnHeaders = init.antecedents.map(a => a.value);
 
-      if (content.type === 'Separator') {
-        //create separator
-        let sepType: SeparatorType;
-        switch (content.value) {
-          case 'double':
-            sepType = SeparatorType.DoubleBar;
-            break;
-          case 'double-dashed':
-            sepType = SeparatorType.DoubleDashed;
-            break;
-          case 'single':
-            sepType = SeparatorType.SingleBar;
-            break;
-          case 'dashed':
-            sepType = SeparatorType.Dashed;
-            break;
-          default: // 'none' or other
-            sepType = SeparatorType.None;
-            break;
-        }
-        let sep: ColumnSeparator = {
-          type: sepType,
-          column: currentColumn,
-          row: currentRow,
-        };
-        let labels: ColumnSeparatorLabel[] = [];
-        for (const key in content.options) {
-          const value = content.options[key];
-          if (typeof value === 'string') {
-            let pos = splitPositionKey(key);
-            if (pos) {
-              labels.push({
-                value: content.options[key] as string,
-                vPosition: pos[0],
-                hPosition: pos[1],
-              });
-            }
-          }
-        }
-        sep.labels = labels;
-        tableDataArgs.columnSeparators.push(sep);
-      }
-      if (content.type === 'Command') {
-        if (
-          content.value === 'INC' ||
-          content.value === 'DEC' ||
-          content.value === 'CONST'
-        ) {
-          //create variation arrow
-          let varType: VariationType;
-          switch (content.value) {
-            case 'DEC':
-              varType = VariationType.Decreasing;
-              break;
-            case 'CONST':
-              varType = VariationType.Constant;
-              break;
-            case 'INC':
-              varType = VariationType.Increasing;
-              break;
-          }
-          let colSpan: number =
-            getOptionAs(content.options, 'colSpan', 'number') || 1;
-          let columnStart = currentColumn;
-          let columnEnd = columnStart + colSpan;
-          currentColumn += colSpan - 1;
+  const columnSeparators: ColumnSeparator[] = [];
+  const variationArrows: VariationArrow[]   = [];
+  const signs: Sign[]                       = [];
+  const forbidenRegions: ForbidenRegion[]   = [];
 
-          let arrowHeadPosition = getOptionAs(content.options, "arrow", "string");
-          if (arrowHeadPosition !== "end" &&
-            arrowHeadPosition !== "start" &&
-            arrowHeadPosition !== "both" &&
-            arrowHeadPosition !== "none") { arrowHeadPosition = "end" }
+  // Parcours dans l'ordre du document
+  let lineRow = 0;
+  let varRow  = 0;
 
-
-          let varArrow: VariationArrow = {
-            type: varType,
-            arrowHeadPosition: arrowHeadPosition as "end"|"start"|"both",//this is type ckeck just before
-            startColumn: columnStart,
-            endColumn: columnEnd,
-            row: currentRow,
-          };
-
-          if(content.value==="CONST"){
-            let position = getOptionAs(content.options, "vPos", "string") ;
-            if(position === "top" || position === "bottom" || position==="center"){
-              varArrow["position"] = position as VerticalPosition ;
-            }
-          }
-          tableDataArgs.variationArrows.push(varArrow);
-        }
-        else if(content.value ==="UNDEF"){
-          const colSpan = getOptionAs(content.options, "colSpan","number") ?? 1 ;
-          let columnStart = currentColumn;
-          let columnEnd = columnStart + colSpan;
-          currentColumn += colSpan - 1;
-
-          const forbidenRegion:ForbidenRegion = {
-            row: currentRow,
-            columnStart: columnStart,
-            columnEnd: columnEnd
-          }
-          tableDataArgs.forbidenRegions.push(forbidenRegion) ;
-        }
-        else if(content.value ==="SKIP"){
-          const colSpan = getOptionAs(content.options, "colSpan","number") ?? 1 ;
-          currentColumn += colSpan - 1;
-        }
-      }
-      if (content.type === 'Text') {
-        let colSpan: number =
-          getOptionAs(content.options, 'colSpan', 'number') || 1;
-        let columnStart = currentColumn;
-        let columnEnd = currentColumn + colSpan;
-        currentColumn += colSpan - 1;
-
-        //create Text/sign
-        let text: Sign = {
-          value: content.value || '',
-          row: currentRow,
-          columnStart: columnStart,
-          columnEnd: columnEnd,
-        };
-        tableDataArgs.signs.push(text);
-      }
+  ast.body.forEach(cmd => {
+    if (cmd.type === 'tkzTabLine') {
+      lineRow++;
+      processLine(cmd as TkzTabLine, lineRow, columnSeparators, signs, forbidenRegions);
+    } else if (cmd.type === 'tkzTabVar') {
+      varRow++;
+      processVar(cmd as TkzTabVar, varRow, variationArrows);
     }
+  });
+
+  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbidenRegions };
+}
+
+// ---------------------------------------------------------------------------
+// Process \tkzTabLine
+// ---------------------------------------------------------------------------
+
+function processLine(
+  line: TkzTabLine,
+  row: number,
+  columnSeparators: ColumnSeparator[],
+  signs: Sign[],
+  forbidenRegions: ForbidenRegion[],
+) {
+  line.elements.forEach((el, i) => {
+    const col = Math.floor(i / 2) + 1;
+    if (el.kind === 'empty') return;
+
+    if (i % 2 === 0) {
+      if (el.kind !== 'keyword') return;
+      switch (el.value) {
+        case 'z':
+          columnSeparators.push({
+            type: SeparatorType.None,
+            column: col,
+            row,
+            labels: [{ value: '0', vPosition: 'center', hPosition: 'center' }],
+          });
+          break;
+        case 't':
+          columnSeparators.push({ type: SeparatorType.Dashed, column: col, row });
+          break;
+        case 'd':
+          columnSeparators.push({ type: SeparatorType.DoubleBar, column: col, row });
+          break;
+        case 'h':
+          forbidenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
+          break;
+      }
+    } else {
+      const value =
+        el.kind === 'keyword'
+          ? el.value
+          : (el as LineElementContent).value.value;
+      signs.push({ value, row, columnStart: col, columnEnd: col + 1 });
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Process \tkzTabVar
+// ---------------------------------------------------------------------------
+
+function processVar(
+  varCmd: TkzTabVar,
+  row: number,
+  variationArrows: VariationArrow[],
+) {
+  const elements = varCmd.elements;
+
+  for (let i = 0; i < elements.length - 1; i++) {
+    const curr = elements[i];
+    if (curr.kind === 'skip') continue;
+
+    // Trouver le prochain élément non-skip et son index réel
+    let nextIndex = i + 1;
+    while (nextIndex < elements.length && elements[nextIndex].kind === 'skip') {
+      nextIndex++;
+    }
+    if (nextIndex >= elements.length) continue;
+    const next = elements[nextIndex];
+
+    const startCol = i + 1;
+    const endCol   = nextIndex + 1;
+
+    const currSign = curr.modifier[0];
+    const nextSign = next.modifier[0];
+
+    let varType: VariationType;
+    if (currSign === '-' && nextSign === '+') {
+      varType = VariationType.Increasing;
+    } else if (currSign === '+' && nextSign === '-') {
+      varType = VariationType.Decreasing;
+    } else if (currSign === '+') {
+      varType = VariationType.Increasing;
+    } else {
+      varType = VariationType.Decreasing;
+    }
+
+    variationArrows.push({
+      type: varType,
+      arrowHeadPosition: 'end',
+      startColumn: startCol,
+      endColumn: endCol,
+      row,
+    });
   }
-  return { data: tableDataArgs };
-}
-
-function getOptionAs<T extends object, K extends keyof T>(
-  obj: T | null | undefined,
-  key: K,
-  type: 'number'
-): number | null;
-
-function getOptionAs<T extends object, K extends keyof T>(
-  obj: T | null | undefined,
-  key: K,
-  type: 'string'
-): string | null;
-
-function getOptionAs<T extends object, K extends keyof T>(
-  obj: T | null | undefined,
-  key: K,
-  type: 'number' | 'string'
-): string | number | null {
-  if (!obj || !(key in obj)) return null;
-
-  const value = obj[key];
-  if (type === 'number') {
-    return Number(value);
-  } else return value as string;
-}
-
-function splitPositionKey(
-  key: string
-): [VerticalPosition, HorizontalPosition] | null {
-  const parts = key.split('-');
-  if (parts.length !== 2) return null;
-
-  const [v, h] = parts;
-
-  const vPoss: VerticalPosition[] = ['top', 'center', 'bottom'];
-  const hPoss: HorizontalPosition[] = ['left', 'center', 'right'];
-
-  if (!vPoss.includes(v as VerticalPosition)) return null;
-  if (!hPoss.includes(h as HorizontalPosition)) return null;
-
-  return [v as VerticalPosition, h as HorizontalPosition];
 }

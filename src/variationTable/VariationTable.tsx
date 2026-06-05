@@ -9,9 +9,7 @@ import {
 } from './models/TableData';
 import { useMemo, useReducer } from 'react';
 import {
-  type transformationResult,
-  parseToAst,
-  astToTableData,
+  parseToTableData
 } from './transform';
 
 export interface LabelGeometry {
@@ -36,11 +34,9 @@ export interface MeasuredData {
 }
 
 function VariationTable({ inputText }: { inputText: string }) {
-  const { data, error }: transformationResult =
-    useMemo((): transformationResult => {
-      let parseResult = parseToAst(inputText);
-      let tableDataArg = astToTableData(parseResult);
-      return tableDataArg;
+  const { data, error } =
+    useMemo(() => {
+      const { data, error } = parseToTableData(inputText);
     }, [inputText]);
 
   const tableData = useMemo(() => {
