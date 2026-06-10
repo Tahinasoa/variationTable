@@ -10,7 +10,7 @@ import {
 import { useMemo, useReducer } from 'react';
 import {
   parseToTableData
-} from './transform';
+} from './transform.ts';
 
 export interface LabelGeometry {
   // Data attributes
@@ -36,7 +36,7 @@ export interface MeasuredData {
 function VariationTable({ inputText }: { inputText: string }) {
   const { data, error } =
     useMemo(() => {
-      const { data, error } = parseToTableData(inputText);
+      return parseToTableData(inputText);
     }, [inputText]);
 
   const tableData = useMemo(() => {

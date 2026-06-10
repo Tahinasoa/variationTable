@@ -96,12 +96,11 @@ function processLine(
     if (el.kind === 'empty') return;
 
     if (i % 2 === 0) {
-      if (el.kind === 'keyword')
-      {
-        switch (el.value) {
+      if (el.kind !== 'keyword') return; //fix this logic
+      switch (el.value) {
         case 'z':
           columnSeparators.push({
-            type: SeparatorType.Dashed,
+            type: SeparatorType.None,
             column: col,
             row,
             labels: [{ value: '$0$', vPosition: 'center', hPosition: 'center' }],
@@ -113,12 +112,10 @@ function processLine(
         case 'd':
           columnSeparators.push({ type: SeparatorType.DoubleBar, column: col, row });
           break;
+        case 'h':
+          forbidenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
+          break;
       }
-    }
-    else if (el.kind === "content") {
-      alert(el) ;
-      columnSeparators.push({ type: SeparatorType.None , column: col, row,labels : [{value : el.value, vPosition : 'center', hPosition  : 'center'}] });
-    }
     } else {
       const value =
         el.kind === 'keyword'
