@@ -44,13 +44,13 @@ export function parseToTableData(input: string): { data?: TableDataArgs; error?:
 // ---------------------------------------------------------------------------
 
 function transform(ast: TkzTabDocument): TableDataArgs {
-  if(ast.body[0].type !== "tkzTabInit"){
-    throw new Error("tkztabInit not found") ;
+  if (ast.body[0].type !== "tkzTabInit") {
+    throw new Error("tkztabInit not found");
   }
 
-  const init = ast.body[0] ;
+  const init = ast.body[0];
 
-  const variable     = init.rows[0]?.label.value ?? null;
+  const variable = init.rows[0]?.label.value ?? null;
   const rowLabels: RowData[] = init.rows.slice(1).map(r => ({
     content: r.label.value,
     heightMultiplier: r.height,
@@ -59,13 +59,13 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   const columnHeaders = init.antecedents.map(a => a.value);
 
   const columnSeparators: ColumnSeparator[] = [];
-  const variationArrows: VariationArrow[]   = [];
-  const signs: Sign[]                       = [];
-  const forbidenRegions: ForbidenRegion[]   = [];
+  const variationArrows: VariationArrow[] = [];
+  const signs: Sign[] = [];
+  const forbidenRegions: ForbidenRegion[] = [];
 
   // Parcours dans l'ordre du document
   let lineRow = 0;
-  let varRow  = 0;
+  let varRow = 0;
 
   ast.body.forEach(cmd => {
     if (cmd.type === 'tkzTabLine') {
@@ -96,35 +96,41 @@ function processLine(
     if (el.kind === 'empty') return;
 
     if (i % 2 === 0) {
-      if (el.kind === 'keyword')
-      {
+      if (el.kind === 'keyword' && el.value !== 'h') {
         switch (el.value) {
-        case 'z':
-          columnSeparators.push({
-            type: SeparatorType.Dashed,
-            column: col,
-            row,
-            labels: [{ value: '$0$', vPosition: 'center', hPosition: 'center' }],
-          });
-          break;
-        case 't':
-          columnSeparators.push({ type: SeparatorType.Dashed, column: col, row });
-          break;
-        case 'd':
-          columnSeparators.push({ type: SeparatorType.DoubleBar, column: col, row });
-          break;
+          case 'z':
+            columnSeparators.push({
+              type: SeparatorType.Dashed,
+              column: col,
+              row,
+              labels: [{ value: '$0$', vPosition: 'center', hPosition: 'center' }],
+            });
+            break;
+          case 't':
+            columnSeparators.push({ type: SeparatorType.Dashed, column: col, row });
+            break;
+          case 'd':
+            columnSeparators.push({ type: SeparatorType.DoubleBar, column: col, row });
+            break;
+        }
       }
-    }
-    else if (el.kind === "content") {
-      alert(el) ;
-      columnSeparators.push({ type: SeparatorType.None , column: col, row,labels : [{value : el.value, vPosition : 'center', hPosition  : 'center'}] });
-    }
+      else if (el.kind === "content" || (el.kind === "keyword" && el.value === "h")) {
+        const value = el.kind === "content" ? `$${el.value.value}$` : 'h';
+        columnSeparators.push({ type: SeparatorType.None, column: col, row, labels: [{ value: value, vPosition: 'center', hPosition: 'center' }] });
+      }
     } else {
-      const value =
-        el.kind === 'keyword'
-          ? el.value
-    : `$f${(el as LineElementContent).value.value}$`;
-      signs.push({ value, row, columnStart: col, columnEnd: col + 1 });
+      if (el.kind === 'keyword' && el.value === 'h') {
+        forbidenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
+
+      }
+      else {
+
+        const value =
+          el.kind === 'keyword'
+            ? el.value
+            : el.value.value;
+        signs.push({ value: `$${value}$`, row, columnStart: col, columnEnd: col + 1 });
+      }
     }
   });
 }
@@ -153,7 +159,7 @@ function processVar(
     const next = elements[nextIndex];
 
     const startCol = i + 1;
-    const endCol   = nextIndex + 1;
+    const endCol = nextIndex + 1;
 
     const currSign = curr.modifier[0];
     const nextSign = next.modifier[0];
