@@ -9,7 +9,6 @@ function App() {
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      // todo : fix typing ,ensure security
       let btn: HTMLElement | null = (
         (e.target as HTMLElement) || null
       )?.closest('.try-it');

@@ -73,7 +73,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
       processLine(cmd as TkzTabLine, lineRow, columnSeparators, signs, forbidenRegions);
     } else if (cmd.type === 'tkzTabVar') {
       varRow++;
-      processVar(cmd as TkzTabVar, varRow, variationArrows);
+      processVar(cmd, varRow, variationArrows, columnSeparators);
     }
   });
 
@@ -143,11 +143,14 @@ function processVar(
   varCmd: TkzTabVar,
   row: number,
   variationArrows: VariationArrow[],
+  columnSeparators: ColumnSeparator[],
 ) {
   const elements = varCmd.elements;
 
   for (let i = 0; i < elements.length - 1; i++) {
     const curr = elements[i];
+
+
     if (curr.kind === 'skip') continue;
 
     // Trouver le prochain élément non-skip et son index réel
@@ -165,14 +168,17 @@ function processVar(
     const nextSign = next.modifier[0];
 
     let varType: VariationType;
+    let verticalPosition: 'top' | 'center' | 'bottom' | null = null;
     if (currSign === '-' && nextSign === '+') {
       varType = VariationType.Increasing;
     } else if (currSign === '+' && nextSign === '-') {
       varType = VariationType.Decreasing;
-    } else if (currSign === '+') {
-      varType = VariationType.Increasing;
+    } else if (currSign === nextSign && currSign === '+') {
+      varType = VariationType.Constant;
+      verticalPosition = 'top';
     } else {
-      varType = VariationType.Decreasing;
+      varType = VariationType.Constant;
+      verticalPosition = 'bottom';
     }
 
     variationArrows.push({
@@ -180,8 +186,16 @@ function processVar(
       arrowHeadPosition: 'end',
       startColumn: startCol,
       endColumn: endCol,
-      row,
+      position: verticalPosition ?? 'center',
+      row: row + 1, //TODO: revoir le row, pourquoi le ++
     });
+    columnSeparators.push(
+      {
+        type: SeparatorType.None,
+        column: endCol,
+        row: row + 1, //TODO: revoir le row, pourquoi le ++
+        labels: [{ value: '', vPosition: verticalPosition ?? 'center', hPosition: 'center' }] //TODO: modifier le parseur pour récupérer la valeur du label associé à la variation
+      });
   }
 }
 
