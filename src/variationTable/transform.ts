@@ -150,6 +150,26 @@ function processVar(
   for (let i = 0; i < elements.length - 1; i++) {
     const curr = elements[i];
 
+    //  ----------------------------------------------------
+    // Process separators and associated labels
+    //  ----------------------------------------------------
+    if (curr.kind === 'single' && curr.value) {
+      if (curr.kind === 'single' && curr.value) {
+        const labelPosition = curr.modifier[0] === '+' ? 'top' : 'bottom';
+        columnSeparators.push({
+          type: SeparatorType.None,
+          column: i + 1,
+          row,
+          labels: [{ value: curr.value.value, vPosition: 'center', hPosition: 'center' }],
+        });
+      }
+    }
+
+  }
+
+  for (let i = 0; i < elements.length - 1; i++) {
+    const curr = elements[i];
+
 
     if (curr.kind === 'skip') continue;
 
@@ -171,8 +191,10 @@ function processVar(
     let verticalPosition: 'top' | 'center' | 'bottom' | null = null;
     if (currSign === '-' && nextSign === '+') {
       varType = VariationType.Increasing;
+      verticalPosition = 'bottom';
     } else if (currSign === '+' && nextSign === '-') {
       varType = VariationType.Decreasing;
+      verticalPosition = 'top';
     } else if (currSign === nextSign && currSign === '+') {
       varType = VariationType.Constant;
       verticalPosition = 'top';
@@ -180,6 +202,7 @@ function processVar(
       varType = VariationType.Constant;
       verticalPosition = 'bottom';
     }
+
 
     variationArrows.push({
       type: varType,
@@ -192,9 +215,9 @@ function processVar(
     columnSeparators.push(
       {
         type: SeparatorType.None,
-        column: endCol,
+        column: startCol,
         row: row + 1, //TODO: revoir le row, pourquoi le ++
-        labels: [{ value: '', vPosition: verticalPosition ?? 'center', hPosition: 'center' }] //TODO: modifier le parseur pour récupérer la valeur du label associé à la variation
+        labels: [{ value: 'Hello', vPosition: verticalPosition ?? 'center', hPosition: 'center' }]
       });
   }
 }
