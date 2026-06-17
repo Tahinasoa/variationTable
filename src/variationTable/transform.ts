@@ -10,6 +10,7 @@ import {
   type TableDataArgs,
   type VariationArrow,
   type ForbidenRegion,
+  ColumnSeparatorLabel,
 } from './models/TableData.js';
 
 import type {
@@ -147,79 +148,139 @@ function processVar(
 ) {
   const elements = varCmd.elements;
 
-  for (let i = 0; i < elements.length - 1; i++) {
+ 
+  for (let i = 0; i < elements.length; i++) {
     const curr = elements[i];
 
     //  ----------------------------------------------------
     // Process separators and associated labels
     //  ----------------------------------------------------
-    if (curr.kind === 'single' && curr.value) {
-      if (curr.kind === 'single' && curr.value) {
-        const labelPosition = curr.modifier[0] === '+' ? 'top' : 'bottom';
-        columnSeparators.push({
+    const modifier = curr.modifier;
+    const plusCount = modifier.split('').filter(c => c === '+').length;
+    const minusCount = modifier.split('').filter(c => c === '-').length;
+    const signCount = plusCount + minusCount;
+    if (signCount === 0 || signCount > 2) {
+      throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
+    }
+
+    /*
+    Groupe 1 — un seul expression 
+    +, -, +C, -C, +D, -D, D+, D-, +DH, -DH, +CH, -CH, +H, -H, R
+      → 15 cas
+    Groupe 2 — deux expressions distincts 
+    +D-, -D+, +D+, -D-, +CD+, -CD-, +CD-, -CD+, +DC+, -DC-, +DC-, -DC+, +V+, -V-, +V-, -V+
+      → 16 cas
+    Total : 31 cas, dont R qui est le seul à ne rien dessiner du tout.
+
+    */
+
+    if (modifier === "R") {
+      // Skip element, do nothing
+    }
+
+    //Groupe 1 — un seul expression 
+    else if (modifier === "+" || modifier === "-") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.None,
+          column: i + 1, row,
+          labels: makeLabel(curr.left?.value, modifier === '+' ? 'top' : 'bottom', 'center')
+        }
+      );
+    }
+    else if(modifier === "+C" || modifier === "-C") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.DoubleBar,
+          column: i + 1,
+          row,
+          labels: makeLabel(curr.left?.value, modifier === '+C' ? 'top' : 'bottom', 'center')
+        }
+      );
+    }
+    else if(modifier === "+D" || modifier === "-D") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.DoubleBar,
+          column: i + 1,
+          row,
+          labels: makeLabel(curr.left?.value, modifier === '+D' ? 'top' : 'bottom', 'left')
+        }
+      );
+    }
+        else if(modifier === "D+" || modifier === "D-") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.DoubleBar,
+          column: i + 1,
+          row,
+          labels: makeLabel(curr.left?.value, modifier === 'D+' ? 'top' : 'bottom', 'right')
+        }
+      );
+    }
+    else if(modifier === "+CH" || modifier === "-CH") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.DoubleBar,
+          column: i + 1,
+          row,
+          labels: makeLabel(curr.left?.value, modifier === '+CH' ? 'top' : 'bottom', 'center')
+        }
+      );
+    }
+    else if(modifier === "+DH" || modifier === "-DH") {
+      columnSeparators.push(
+        {
+          type: SeparatorType.DoubleBar,
+          column: i + 1,
+          row,
+          labels: makeLabel(curr.left?.value, modifier === '+DH' ? 'top' : 'bottom', 'left')
+        }
+      );
+    }
+    else if(modifier === "+H" || modifier === "-H") {
+      columnSeparators.push(
+        {
           type: SeparatorType.None,
           column: i + 1,
           row,
-          labels: [{ value: curr.value.value, vPosition: 'center', hPosition: 'center' }],
-        });
-      }
+          labels: makeLabel(curr.left?.value, modifier === '+H' ? 'top' : 'bottom', 'center')
+        }
+      );
     }
+    
+    // Groupe 2 — deux expressions distincts 
+    else if (/^[+-](D|CD|DC|V)[+-]$/.test(modifier)) {
+      const firstSign = modifier[0];
+      const secondSign = modifier[modifier.length - 1];
+      const type = modifier.slice(1, -1);
+      const separatorType = type === 'V' ? SeparatorType.None : SeparatorType.DoubleBar;
 
-  }
-
-  for (let i = 0; i < elements.length - 1; i++) {
-    const curr = elements[i];
-
-
-    if (curr.kind === 'skip') continue;
-
-    // Trouver le prochain élément non-skip et son index réel
-    let nextIndex = i + 1;
-    while (nextIndex < elements.length && elements[nextIndex].kind === 'skip') {
-      nextIndex++;
-    }
-    if (nextIndex >= elements.length) continue;
-    const next = elements[nextIndex];
-
-    const startCol = i + 1;
-    const endCol = nextIndex + 1;
-
-    const currSign = curr.modifier[0];
-    const nextSign = next.modifier[0];
-
-    let varType: VariationType;
-    let verticalPosition: 'top' | 'center' | 'bottom' | null = null;
-    if (currSign === '-' && nextSign === '+') {
-      varType = VariationType.Increasing;
-      verticalPosition = 'bottom';
-    } else if (currSign === '+' && nextSign === '-') {
-      varType = VariationType.Decreasing;
-      verticalPosition = 'top';
-    } else if (currSign === nextSign && currSign === '+') {
-      varType = VariationType.Constant;
-      verticalPosition = 'top';
-    } else {
-      varType = VariationType.Constant;
-      verticalPosition = 'bottom';
-    }
-
-
-    variationArrows.push({
-      type: varType,
-      arrowHeadPosition: 'end',
-      startColumn: startCol,
-      endColumn: endCol,
-      position: verticalPosition ?? 'center',
-      row: row + 1, //TODO: revoir le row, pourquoi le ++
-    });
-    columnSeparators.push(
-      {
-        type: SeparatorType.None,
-        column: startCol,
-        row: row + 1, //TODO: revoir le row, pourquoi le ++
-        labels: [{ value: 'Hello', vPosition: verticalPosition ?? 'center', hPosition: 'center' }]
+      const firstLabelVPosition = firstSign === '+' ? 'top' : 'bottom';
+      const secondLabelVPosition = secondSign === '+' ? 'top' : 'bottom';
+      const firstLabelHPosition = type === 'CD' ? 'center' : 'left';
+      const secondLabelHPosition = type === 'DC' ? 'center' : 'right';
+      const firstLabelValue = curr.left?.value ?? '';
+      const secondLabelValue = curr.right?.value ?? '';
+      const firstLabel = makeLabel(firstLabelValue, firstLabelVPosition, firstLabelHPosition);
+      const secondLabel = makeLabel(secondLabelValue, secondLabelVPosition, secondLabelHPosition);
+      const labels = [...firstLabel, ...secondLabel];
+      columnSeparators.push({
+        type: separatorType,
+        column: i + 1,
+        row,
+        labels,
       });
+
+    }
+    else {
+      throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
+    }
   }
 }
 
+function makeLabel(value: string | undefined, vPos: 'top' | 'bottom', hPos: 'left' | 'center' | 'right'): ColumnSeparatorLabel[] {
+  if (!value) return [];
+  return [{ value, vPosition: vPos, hPosition: hPos }];
+}
 // //

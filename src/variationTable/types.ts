@@ -34,7 +34,7 @@ export interface LatexExpression {
   // Éléments de \tkzTabVar
   // ---------------------------------------------------------------------------
   
-  export type VarModifier = "+" | "-" | "+C" | "-C" | "+D" | "-D" | "D+" | "D-" | "+DH" | "-DH" | "+CH" | "-CH" | "+H" | "-H" | "R" | "+D-" | "-D+" | "+D+" | "-D-" | "+CD+" | "-CD-" | "+CD-" | "-CD+" | "+DC+" | "-DC-" | "+DC-" | "-DC+" | "+V+" | "-V-" | "+V-" | "-V+";
+  export type VarModifier = string; //"+" | "-" | "+C" | "-C" | "+D" | "-D" | "D+" | "D-" | "+DH" | "-DH" | "+CH" | "-CH" | "+H" | "-H" | "R" | "+D-" | "-D+" | "+D+" | "-D-" | "+CD+" | "-CD-" | "+CD-" | "-CD+" | "+DC+" | "-DC-" | "+DC-" | "-DC+" | "+V+" | "-V-" | "+V-" | "-V+";
   
   export interface VarElementSkip {
     kind: "skip";
