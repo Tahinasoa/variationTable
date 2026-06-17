@@ -34,30 +34,18 @@ export interface LatexExpression {
   // Éléments de \tkzTabVar
   // ---------------------------------------------------------------------------
   
-  export type VarModifier = string;
+  export type VarModifier = "+" | "-" | "+C" | "-C" | "+D" | "-D" | "D+" | "D-" | "+DH" | "-DH" | "+CH" | "-CH" | "+H" | "-H" | "R" | "+D-" | "-D+" | "+D+" | "-D-" | "+CD+" | "-CD-" | "+CD-" | "-CD+" | "+DC+" | "-DC-" | "+DC-" | "-DC+" | "+V+" | "-V-" | "+V-" | "-V+";
   
   export interface VarElementSkip {
     kind: "skip";
     modifier: "R";
   }
   
-  export interface VarElementSingle {
-    kind: "single";
-    modifier: VarModifier;
-    value: LatexExpression | null;
-  }
-  
-  export interface VarElementDouble {
-    kind: "double";
+  export type VarElement = {
     modifier: VarModifier;
     left: LatexExpression | null;
-    right: LatexExpression | null;
+    right: LatexExpression | null
   }
-  
-  export type VarElement =
-    | VarElementSkip
-    | VarElementSingle
-    | VarElementDouble;
   
   // ---------------------------------------------------------------------------
   // Types partagés

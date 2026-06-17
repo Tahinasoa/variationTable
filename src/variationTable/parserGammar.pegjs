@@ -1,6 +1,6 @@
 {
   function makeLatex(val) {
-    return { type: "LatexExpression", value: val.trim() };
+    return { type: "LatexExpression", value: val?val.trim():"" };
   }
   function makeLatexOrNull(val) {
     return val.trim() === "" ? null : makeLatex(val);
@@ -89,12 +89,10 @@ VarElementList
     { return elems; }
 
 VarElement
-  = "R" _ "/"
-    { return { kind: "skip", modifier: "R" }; }
-  / mod:VarModifier _ "/" _ left:VarValue _ "/" _ right:VarValue
-    { return { kind: "double", modifier: mod, left: makeLatex(left), right: makeLatex(right) }; }
-  / mod:VarModifier _ "/" _ val:VarValue
-    { return { kind: "single", modifier: mod, value: makeLatex(val) }; }
+  = "R"{ return {modifier: "R" }; }
+  / mod:VarModifier _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?
+    { return { modifier: mod, left: makeLatex(left), right: makeLatex(right) }; }
+
 
 VarModifier
   = $([+\-CDHVcdhv]+)
