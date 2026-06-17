@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build-parser": "peggy --format es --output src/variationTable/parser.js ./grammar.peggy",
+    "build-parser": "peggy --format es --output src/variationTable/parser.mjs src/variationTable/parserGammar.peggy",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
