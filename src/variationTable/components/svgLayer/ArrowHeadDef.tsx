@@ -17,18 +17,18 @@ export const ArrowHeadDef = (
 
 export const ArrowHeadId = "arrowhead";
 
-export const HashPatern = (
+export const HashPattern = (
   <defs>
     <pattern
       id="hashPattern"
-      width="10"
-      height="10"
+      width="4"
+      height="4"
       patternUnits="userSpaceOnUse"
+      patternTransform="rotate(-60)"
     >
-      <rect width="10" height="10" fill="white" />
-      <path d="M0,0 l10,10 M10,0 l-10,10" stroke="#000" strokeWidth="1" />
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1" />
     </pattern>
   </defs>
 );
 
-export const HashPaternId = "hashPattern";
+export const HashPatternId = "hashPattern";

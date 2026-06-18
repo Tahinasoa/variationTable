@@ -2,7 +2,7 @@ import type { TableData } from '../../models/TableData';
 import { RowSeparators } from './RowSeparators';
 import styles from '../../VariationTable.module.css';
 
-import { ArrowHeadDef, HashPatern } from './ArrowHeadDef';
+import { ArrowHeadDef, HashPattern } from './ArrowHeadDef';
 import { ColumnSeparator } from './ColumnSeparators';
 import { TableOutline } from './TableOutline.tsx';
 import { VariationArrows } from './VariationArrows.tsx';
@@ -23,7 +23,7 @@ export function SVGLayer({
       preserveAspectRatio="xMidYMid meet"
     >
       {ArrowHeadDef}
-      {HashPatern}
+      {HashPattern}
       <TableOutline tableData={tableData} />
       <RowSeparators tableData={tableData} />
       <ColumnSeparator tableData={tableData} />
