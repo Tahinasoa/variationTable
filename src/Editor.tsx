@@ -1,4 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror';
+import { latexLanguage } from 'codemirror-lang-latex';
 
 import { type Dispatch, type SetStateAction } from 'react';
 
@@ -9,36 +10,25 @@ export interface EditorProps {
 
 function Editor({ input, setInput }: EditorProps) {
 
+
+
   return (
-    <textarea
+    <CodeMirror
       value={input}
-      onChange={(e) => setInput(e.target.value)}
+      height="300px"
+      onChange={(e) => { setInput(e); }}
+      // basicSetup controls standard features like line numbers and history
+      basicSetup={{
+        lineNumbers: true,
+        foldGutter: true,
+        dropCursor: true,
+        allowMultipleSelections: true,
+        indentOnInput: true,
+        lintKeymap: false,
+      }}
+      extensions={[latexLanguage]}
+      style={{ border: '1px solid #ccc', borderRadius: '4px' }}
     />
-  );
-}
-
-
-
-export function CodeEditor({input, setInput}: EditorProps) {
-
-
-
-  return (
-    <div style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-      <CodeMirror
-        value={input}
-        height="300px"
-        onChange={(e)=>{setInput(e);}}
-        // basicSetup controls standard features like line numbers and history
-        basicSetup={{
-          lineNumbers: true,
-          foldGutter: true,
-          dropCursor: true,
-          allowMultipleSelections: true,
-          indentOnInput: true,
-        }}
-      />
-    </div>
   );
 }
 
