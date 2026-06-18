@@ -147,8 +147,8 @@ function processVar(
   forbiddenRegions: ForbiddenRegion[],
 ) {
   const elements = varCmd.elements;
-  let currSign: { column: number; sign: '+' | '-' } | '-' | null = null;
-  let lastSign: { column: number; sign: '+' | '-' } | '-' | null = null;
+  let currSign: { column: number; sign: '+' | '-' }  | null = null;
+  let lastSign: { column: number; sign: '+' | '-' } | null = null;
 
   for (let i = 0; i < elements.length; i++) {
     const curr = elements[i];

@@ -1,5 +1,5 @@
 import VariationTable from './variationTable/VariationTable';
-import Editor from './Editor';
+import {CodeEditor as Editor} from './Editor';
 import { useEffect, useState } from 'react';
 import { examples } from './examples';
 
