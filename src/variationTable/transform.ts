@@ -9,7 +9,7 @@ import {
   type Sign,
   type TableDataArgs,
   type VariationArrow,
-  type ForbidenRegion,
+  type ForbiddenRegion,
   ColumnSeparatorLabel,
 } from './models/TableData.js';
 
@@ -62,23 +62,23 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   const columnSeparators: ColumnSeparator[] = [];
   const variationArrows: VariationArrow[] = [];
   const signs: Sign[] = [];
-  const forbidenRegions: ForbidenRegion[] = [];
+  const forbiddenRegions: ForbiddenRegion[] = [];
 
   // Parcours dans l'ordre du document
-  let lineRow = 0;
-  let varRow = 0;
+  let row = 0;
+
 
   ast.body.forEach(cmd => {
     if (cmd.type === 'tkzTabLine') {
-      lineRow++;
-      processLine(cmd as TkzTabLine, lineRow, columnSeparators, signs, forbidenRegions);
+      row++;
+      processLine(cmd, row, columnSeparators, signs, forbiddenRegions);
     } else if (cmd.type === 'tkzTabVar') {
-      varRow++;
-      processVar(cmd, varRow, variationArrows, columnSeparators);
+      row++;
+      processVar(cmd, row, variationArrows, columnSeparators,forbiddenRegions);
     }
   });
 
-  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbidenRegions };
+  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbiddenRegions };
 }
 
 // ---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ function processLine(
   row: number,
   columnSeparators: ColumnSeparator[],
   signs: Sign[],
-  forbidenRegions: ForbidenRegion[],
+  forbiddenRegions: ForbiddenRegion[],
 ) {
   line.elements.forEach((el, i) => {
     const col = Math.floor(i / 2) + 1;
@@ -121,8 +121,7 @@ function processLine(
       }
     } else {
       if (el.kind === 'keyword' && el.value === 'h') {
-        forbidenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
-
+        forbiddenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
       }
       else {
 
@@ -145,34 +144,39 @@ function processVar(
   row: number,
   variationArrows: VariationArrow[],
   columnSeparators: ColumnSeparator[],
+  forbiddenRegions: ForbiddenRegion[],
 ) {
   const elements = varCmd.elements;
+  let currSign: { column: number; sign: '+' | '-' } | '-' | null = null;
+  let lastSign: { column: number; sign: '+' | '-' } | '-' | null = null;
 
- 
   for (let i = 0; i < elements.length; i++) {
     const curr = elements[i];
 
     //  ----------------------------------------------------
     // Process separators and associated labels
     //  ----------------------------------------------------
+    const simpleModifiers = ['+', '-', '+C', '-C', '+D', '-D', 'D+', 'D-', '+DH', '-DH', '+CH', '-CH', '+H', '-H', 'R'];
+    const doubleModifiers = ['+D-', '-D+', '+D+', '-D-', '+CD+', '-CD-', '+CD-', '-CD+', '+DC+', '-DC-', '+DC-', '-DC+', '+V+', '-V-', '+V-', '-V+'];
+
+    if (!simpleModifiers.includes(curr.modifier) && !doubleModifiers.includes(curr.modifier) && curr.modifier !== 'R') {
+      throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
+    }
+
     const modifier = curr.modifier;
+    if (simpleModifiers.includes(modifier)) {
+      currSign = modifier.includes('+') ? { column: i + 1, sign: '+' } : (modifier.includes('-') ? { column: i + 1, sign: '-' } : null);
+    }
+    else if (doubleModifiers.includes(modifier)) {
+      currSign = { column: i + 1, sign: modifier[modifier.length - 1] as '+' | '-' };
+    }
+
     const plusCount = modifier.split('').filter(c => c === '+').length;
     const minusCount = modifier.split('').filter(c => c === '-').length;
     const signCount = plusCount + minusCount;
     if (signCount === 0 || signCount > 2) {
       throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
     }
-
-    /*
-    Groupe 1 — un seul expression 
-    +, -, +C, -C, +D, -D, D+, D-, +DH, -DH, +CH, -CH, +H, -H, R
-      → 15 cas
-    Groupe 2 — deux expressions distincts 
-    +D-, -D+, +D+, -D-, +CD+, -CD-, +CD-, -CD+, +DC+, -DC-, +DC-, -DC+, +V+, -V-, +V-, -V+
-      → 16 cas
-    Total : 31 cas, dont R qui est le seul à ne rien dessiner du tout.
-
-    */
 
     if (modifier === "R") {
       // Skip element, do nothing
@@ -188,7 +192,7 @@ function processVar(
         }
       );
     }
-    else if(modifier === "+C" || modifier === "-C") {
+    else if (modifier === "+C" || modifier === "-C") {
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
@@ -198,7 +202,7 @@ function processVar(
         }
       );
     }
-    else if(modifier === "+D" || modifier === "-D") {
+    else if (modifier === "+D" || modifier === "-D") {
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
@@ -208,7 +212,7 @@ function processVar(
         }
       );
     }
-        else if(modifier === "D+" || modifier === "D-") {
+    else if (modifier === "D+" || modifier === "D-") {
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
@@ -218,7 +222,8 @@ function processVar(
         }
       );
     }
-    else if(modifier === "+CH" || modifier === "-CH") {
+    else if (modifier === "+CH" || modifier === "-CH") {
+      forbiddenRegions.push({ row, columnStart: i + 1, columnEnd: i + 2 });
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
@@ -228,7 +233,8 @@ function processVar(
         }
       );
     }
-    else if(modifier === "+DH" || modifier === "-DH") {
+    else if (modifier === "+DH" || modifier === "-DH") {
+      forbiddenRegions.push({ row, columnStart: i + 1, columnEnd: i + 2 });
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
@@ -238,7 +244,8 @@ function processVar(
         }
       );
     }
-    else if(modifier === "+H" || modifier === "-H") {
+    else if (modifier === "+H" || modifier === "-H") {
+      forbiddenRegions.push({ row, columnStart: i + 1, columnEnd: i + 2 });
       columnSeparators.push(
         {
           type: SeparatorType.None,
@@ -248,7 +255,7 @@ function processVar(
         }
       );
     }
-    
+
     // Groupe 2 — deux expressions distincts 
     else if (/^[+-](D|CD|DC|V)[+-]$/.test(modifier)) {
       const firstSign = modifier[0];
@@ -271,11 +278,59 @@ function processVar(
         row,
         labels,
       });
-
     }
     else {
       throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
     }
+
+
+    //-----------------------------------------------------------
+    // Process variation arrows
+    //-----------------------------------------------------------
+    if (currSign !== null && lastSign !== null) {
+      if (currSign.sign === '+' && lastSign.sign === '-') {
+        variationArrows.push({
+          type: VariationType.Increasing,
+          arrowHeadPosition: 'end',
+          startColumn: lastSign.column,
+          endColumn: currSign.column,
+          row,
+        });
+      }
+      else if (currSign.sign === '-' && lastSign.sign === '+') {
+        variationArrows.push({
+          type: VariationType.Decreasing,
+          arrowHeadPosition: 'end',
+          startColumn: lastSign.column,
+          endColumn: currSign.column,
+          row,
+        });
+      }
+      else if (currSign.sign === '+' && lastSign.sign === '+') {
+        variationArrows.push({
+          type: VariationType.Constant,
+          arrowHeadPosition: 'end',
+          startColumn: lastSign.column,
+          endColumn: currSign.column,
+          row,
+        });
+      }
+      else if (currSign.sign === '-' && lastSign.sign === '-') {
+        variationArrows.push({
+          type: VariationType.Constant,
+          arrowHeadPosition: 'end',
+          startColumn: lastSign.column,
+          endColumn: currSign.column,
+          row,
+        });
+      }
+    }
+console.table({
+  Current: { sign: currSign?.sign, column: currSign?.column },
+  Last: { sign: lastSign?.sign, column: lastSign?.column }
+});
+
+    lastSign = currSign;
   }
 }
 

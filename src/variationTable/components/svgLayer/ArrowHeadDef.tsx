@@ -26,7 +26,7 @@ export const HashPatern = (
       patternUnits="userSpaceOnUse"
     >
       <rect width="10" height="10" fill="white" />
-      <path d="M0,0 l10,10 M10,0 l-10,10" stroke="#000" stroke-width="1" />
+      <path d="M0,0 l10,10 M10,0 l-10,10" stroke="#000" strokeWidth="1" />
     </pattern>
   </defs>
 );

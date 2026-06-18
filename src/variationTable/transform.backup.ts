@@ -9,7 +9,7 @@ import {
   type Sign,
   type TableDataArgs,
   type VariationArrow,
-  type ForbidenRegion,
+  type ForbiddenRegion,
 } from './models/TableData.js';
 
 import type {
@@ -61,7 +61,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   const columnSeparators: ColumnSeparator[] = [];
   const variationArrows: VariationArrow[]   = [];
   const signs: Sign[]                       = [];
-  const forbidenRegions: ForbidenRegion[]   = [];
+  const forbiddenRegions: ForbiddenRegion[]   = [];
 
   // Parcours dans l'ordre du document
   let lineRow = 0;
@@ -70,14 +70,14 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   ast.body.forEach(cmd => {
     if (cmd.type === 'tkzTabLine') {
       lineRow++;
-      processLine(cmd as TkzTabLine, lineRow, columnSeparators, signs, forbidenRegions);
+      processLine(cmd as TkzTabLine, lineRow, columnSeparators, signs, forbiddenRegions);
     } else if (cmd.type === 'tkzTabVar') {
       varRow++;
       processVar(cmd as TkzTabVar, varRow, variationArrows);
     }
   });
 
-  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbidenRegions };
+  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbiddenRegions };
 }
 
 // ---------------------------------------------------------------------------
@@ -89,7 +89,7 @@ function processLine(
   row: number,
   columnSeparators: ColumnSeparator[],
   signs: Sign[],
-  forbidenRegions: ForbidenRegion[],
+  forbiddenRegions: ForbiddenRegion[],
 ) {
   line.elements.forEach((el, i) => {
     const col = Math.floor(i / 2) + 1;
@@ -113,7 +113,7 @@ function processLine(
           columnSeparators.push({ type: SeparatorType.DoubleBar, column: col, row });
           break;
         case 'h':
-          forbidenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
+          forbiddenRegions.push({ row, columnStart: col, columnEnd: col + 1 });
           break;
       }
     } else {

@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import { TableData } from "../../models/TableData";
 
-export function ForbidenRegions({tableData}:{tableData:TableData}){
-    const regions:ReactElement<SVGRectElement>[] = tableData.forbidenRegions.map((value)=>{
+export function ForbiddenRegions({tableData}:{tableData:TableData}){
+    const regions:ReactElement<SVGRectElement>[] = tableData.forbiddenRegions.map((value)=>{
         const x1 = tableData.getNodeX(value.columnStart) ;
         const x2 = tableData.getNodeX(value.columnEnd) ;
         const y1 = tableData.getNodeY(value.row) ;

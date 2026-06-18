@@ -61,7 +61,7 @@ export interface Sign {
   columnStart: number;
   columnEnd: number;
 }
-export interface ForbidenRegion {
+export interface ForbiddenRegion {
   row: number;
   columnStart: number;
   columnEnd: number;
@@ -75,7 +75,7 @@ export interface TableDataArgs {
   columnSeparators: ColumnSeparator[];
   variationArrows: VariationArrow[];
   signs: Sign[];
-  forbidenRegions : ForbidenRegion[] ;
+  forbiddenRegions : ForbiddenRegion[] ;
 }
 export class TableData {
   // Data
@@ -85,7 +85,7 @@ export class TableData {
   columnSeparators: ColumnSeparator[];
   variationArrows: VariationArrow[];
   signs: Sign[];
-  forbidenRegions:ForbidenRegion[];
+  forbiddenRegions:ForbiddenRegion[];
 
   readonly columnCount: number;
   readonly rowCount: number;
@@ -107,7 +107,7 @@ export class TableData {
     columnSeparators,
     variationArrows,
     signs,
-    forbidenRegions
+    forbiddenRegions
   }: TableDataArgs) {
     this.variable = variable;
     this.rowLabels = rowLabels;
@@ -115,7 +115,7 @@ export class TableData {
     this.columnSeparators = columnSeparators;
     this.variationArrows = variationArrows;
     this.signs = signs;
-    this.forbidenRegions = forbidenRegions ;
+    this.forbiddenRegions = forbiddenRegions ;
     this.rowCount = this.rowLabels.length;
     this.columnCount = this.columnHeaders.length;
     this.width =

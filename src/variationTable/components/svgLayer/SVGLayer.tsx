@@ -7,7 +7,7 @@ import { ColumnSeparator } from './ColumnSeparators';
 import { TableOutline } from './TableOutline.tsx';
 import { VariationArrows } from './VariationArrows.tsx';
 import type { MeasuredData } from '../../VariationTable.tsx';
-import { ForbidenRegions } from './ForbidenRegions.tsx';
+import { ForbiddenRegions } from './ForbiddenRegions.tsx';
 
 export function SVGLayer({
   tableData,
@@ -31,7 +31,7 @@ export function SVGLayer({
         labelGeometry={measuredData.labelGeometry}
         tableData={tableData}
       />
-      <ForbidenRegions tableData={tableData}/>
+      <ForbiddenRegions tableData={tableData}/>
     </svg>
   );
 }
