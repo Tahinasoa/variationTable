@@ -63,7 +63,7 @@ code #44 :
 \end{tikzpicture}
 issue : the arrow is still drawn other the hashed region.
 
-code #45 :
+code #45 : !!Important
 \begin{tikzpicture}
   \tkzTabInit{$x$ / 1, $f(x)$ / 2}{$0$, $1$, $2$, $3$}
   \tkzTabVar{+/ $1$ , -CH/ $-2$ / , D+/ / $+\infty$ , -/ $2$}

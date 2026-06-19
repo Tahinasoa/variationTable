@@ -70,7 +70,6 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   let row = 0;
 
   function checkRowCount(currentRow: number, initRowCount: number) {
-    console.log(`Checking row count: currentRow=${currentRow}, initRowCount=${initRowCount}`);
     
     if (currentRow > initRowCount) {
       throw new Error(`Row ${currentRow} exceeds the number of headers (${initRowCount})`);
@@ -338,7 +337,12 @@ function processVar(
       }
     }
 
-    lastSign = {...currSign, right : currSign?.left} as any; //TODO //VERY VERY BAD IDEA FIX IT PLEASE
+    if(currSign){
+      lastSign = {...currSign}
+      if(!currSign.right){
+        lastSign.right = currSign.left ;
+      } 
+    }
   }
 }
 
