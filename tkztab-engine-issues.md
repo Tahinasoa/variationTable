@@ -7,7 +7,7 @@ souvent vers le même bug sous-jacent).
 
 ---
 
-## 1. Crashs — gestion du nombre de lignes
+## 1. Crashs — gestion du nombre de lignes ✅:fixed
 
 Le moteur ne valide pas que le nombre de lignes déclarées dans
 `tkzTabInit` correspond au nombre de lignes réellement utilisées par les

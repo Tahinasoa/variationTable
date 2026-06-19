@@ -159,8 +159,8 @@ function processVar(
   forbiddenRegions: ForbiddenRegion[],
 ) {
   const elements = varCmd.elements;
-  let currSign: { column: number; sign: '+' | '-' }  | null = null;
-  let lastSign: { column: number; sign: '+' | '-' } | null = null;
+  let currSign: { column: number; left: '+' | '-', right?: '+' | '-' } | null = null;
+  let lastSign: { column: number; left: '+' | '-', right?: '+' | '-' } | null = null;
 
   for (let i = 0; i < elements.length; i++) {
     const curr = elements[i];
@@ -177,10 +177,12 @@ function processVar(
 
     const modifier = curr.modifier;
     if (simpleModifiers.includes(modifier)) {
-      currSign = modifier.includes('+') ? { column: i + 1, sign: '+' } : (modifier.includes('-') ? { column: i + 1, sign: '-' } : null);
+      currSign = modifier.includes('+') ? { column: i + 1, left: '+' } : (modifier.includes('-') ? { column: i + 1, left: '-' } : null);
     }
     else if (doubleModifiers.includes(modifier)) {
-      currSign = { column: i + 1, sign: modifier[modifier.length - 1] as '+' | '-' };
+      const currentLeftSign = modifier[0] as "+" | "-";
+      const currentRightSign = modifier[modifier.length - 1] as "+" | "-";
+      currSign = { column: i + 1, left: currentLeftSign, right: currentRightSign };
     }
 
     const plusCount = modifier.split('').filter(c => c === '+').length;
@@ -270,13 +272,11 @@ function processVar(
 
     // Groupe 2 — deux expressions distincts 
     else if (/^[+-](D|CD|DC|V)[+-]$/.test(modifier)) {
-      const firstSign = modifier[0];
-      const secondSign = modifier[modifier.length - 1];
       const type = modifier.slice(1, -1);
       const separatorType = type === 'V' ? SeparatorType.None : SeparatorType.DoubleBar;
 
-      const firstLabelVPosition = firstSign === '+' ? 'top' : 'bottom';
-      const secondLabelVPosition = secondSign === '+' ? 'top' : 'bottom';
+      const firstLabelVPosition = currSign?.left === '+' ? 'top' : 'bottom';
+      const secondLabelVPosition = currSign?.right === '+' ? 'top' : 'bottom';
       const firstLabelHPosition = type === 'CD' ? 'center' : 'left';
       const secondLabelHPosition = type === 'DC' ? 'center' : 'right';
       const firstLabelValue = curr.left?.value ?? '';
@@ -300,7 +300,7 @@ function processVar(
     // Process variation arrows
     //-----------------------------------------------------------
     if (currSign !== null && lastSign !== null) {
-      if (currSign.sign === '+' && lastSign.sign === '-') {
+      if (currSign.left === '+' && lastSign.right === '-') {
         variationArrows.push({
           type: VariationType.Increasing,
           arrowHeadPosition: 'end',
@@ -309,7 +309,7 @@ function processVar(
           row,
         });
       }
-      else if (currSign.sign === '-' && lastSign.sign === '+') {
+      else if (currSign.left === '-' && lastSign.right === '+') {
         variationArrows.push({
           type: VariationType.Decreasing,
           arrowHeadPosition: 'end',
@@ -318,7 +318,7 @@ function processVar(
           row,
         });
       }
-      else if (currSign.sign === '+' && lastSign.sign === '+') {
+      else if (currSign.left === '+' && lastSign.right === '+') {
         variationArrows.push({
           type: VariationType.Constant,
           arrowHeadPosition: 'end',
@@ -327,7 +327,7 @@ function processVar(
           row,
         });
       }
-      else if (currSign.sign === '-' && lastSign.sign === '-') {
+      else if (currSign.left === '-' && lastSign.right === '-') {
         variationArrows.push({
           type: VariationType.Constant,
           arrowHeadPosition: 'end',
@@ -337,12 +337,8 @@ function processVar(
         });
       }
     }
-console.table({
-  Current: { sign: currSign?.sign, column: currSign?.column },
-  Last: { sign: lastSign?.sign, column: lastSign?.column }
-});
 
-    lastSign = currSign;
+    lastSign = {...currSign, right : currSign?.left} as any; //TODO //VERY VERY BAD IDEA FIX IT PLEASE
   }
 }
 
