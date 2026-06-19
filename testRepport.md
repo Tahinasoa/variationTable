@@ -174,7 +174,7 @@ code #63:
 \end{tikzpicture}
 issue : issue : first arrow not handled correctly.
 
-code #63
+code #64
 \begin{tikzpicture}
 \tkzTabInit{$x$ / 1, $f'(x)$ / 2, $f(x)$ / 2}{$0$, $\sqrt{e}$, $+\infty$}
 \tkzTabLine{d , + , 0 , + , }

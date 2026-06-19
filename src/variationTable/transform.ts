@@ -49,7 +49,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
     throw new Error("tkztabInit not found");
   }
 
-  const init = ast.body[0];
+  const init:TkzTabInit = ast.body[0];
 
   const variable = init.rows[0]?.label.value ?? null;
   const rowLabels: RowData[] = init.rows.slice(1).map(r => ({
@@ -58,6 +58,8 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   }));
 
   const columnHeaders = init.antecedents.map(a => a.value);
+  const initRowCount = init.rows.length-1; //
+
 
   const columnSeparators: ColumnSeparator[] = [];
   const variationArrows: VariationArrow[] = [];
@@ -67,13 +69,23 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   // Parcours dans l'ordre du document
   let row = 0;
 
+  function checkRowCount(currentRow: number, initRowCount: number) {
+    console.log(`Checking row count: currentRow=${currentRow}, initRowCount=${initRowCount}`);
+    
+    if (currentRow > initRowCount) {
+      throw new Error(`Row ${currentRow} exceeds the number of headers (${initRowCount})`);
+    }
+  }
+
 
   ast.body.forEach(cmd => {
-    if (cmd.type === 'tkzTabLine') {
+    if (cmd.type === 'tkzTabLine') { 
       row++;
+      checkRowCount(row, initRowCount);
       processLine(cmd, row, columnSeparators, signs, forbiddenRegions);
     } else if (cmd.type === 'tkzTabVar') {
       row++;
+      checkRowCount(row, initRowCount);
       processVar(cmd, row, variationArrows, columnSeparators,forbiddenRegions);
     }
   });

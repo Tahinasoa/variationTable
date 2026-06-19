@@ -152,12 +152,13 @@ export class TableData {
 
   //Y position of a node
   getNodeY(row: number): number {
-    // TODO SAFETY RULES HERE
     if (row === 0) return 0;
-    if (row === 1) return this.headerRowHeight;
 
     let y = this.headerRowHeight;
     for (let i = 0; i < row - 1; i++) {
+      if( i >= this.rowLabels.length) {
+        throw new Error(`Row index ${i} is out of bounds for rowLabels of length ${this.rowLabels.length}`);
+      }
       y += this.baseRowHeight * this.rowLabels[i].heightMultiplier;
     }
     return y;
