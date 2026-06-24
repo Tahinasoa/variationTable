@@ -109,7 +109,7 @@ SlopeValue = $(![,/}] @Expression)*
 SlopeEntry
   = rank:Integer _ "/" _ left:SlopeValue _ "/" _ right:SlopeValue
     { 
-      return { 
+      return {
         atRank: rank, 
         leftValue: left.trim() === "" ? null : makeLatex(left),
         rightValue: right.trim() === "" ? null : makeLatex(right)
