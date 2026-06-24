@@ -89,7 +89,7 @@ VarElementList
     { return elems; }
 
 VarElement
-  = "R"{ return {modifier: "R" }; }
+  = "R" (_"/")?{ return {modifier: "R" }; }
   / mod:VarModifier _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?
     { return { modifier: mod, left: makeLatex(left), right: makeLatex(right) }; }
 
