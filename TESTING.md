@@ -10,7 +10,7 @@ Suivi centralisé des anomalies, cas limites (edge cases) et décisions techniqu
 | #02 | Décalage flèches: Syntaxe double (ex: `+CD-`, `D+/`) |  To Do |
 | #03 | Rendu: Flèches horizontales "top" (ex: `+/` puis `+/`) |  To Do |
 | #04 | Rendu: Zone hachurée et labels (#35, #46) | To Do |
-| #05 | Support: Supporter `R` et `R` dans le parser et dans le renderer | Working |
+| #05 | Support: Supporter `R`, `R/` et `R / ` dans le parser et dans le renderer | Working |
 
 ## 🧪 Matrice des Edge Cases (Batterie de tests)
 *Référence: `tkztab_tests.pdf`*

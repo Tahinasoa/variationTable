@@ -187,7 +187,7 @@ function processVar(
     const plusCount = modifier.split('').filter(c => c === '+').length;
     const minusCount = modifier.split('').filter(c => c === '-').length;
     const signCount = plusCount + minusCount;
-    if (signCount === 0 || signCount > 2) {
+    if ((signCount === 0 || signCount > 2)&& modifier !== 'R') {
       throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
     }
 
