@@ -49,7 +49,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
     throw new Error("tkztabInit not found");
   }
 
-  const init:TkzTabInit = ast.body[0];
+  const init: TkzTabInit = ast.body[0];
 
   const variable = init.rows[0]?.label.value ?? null;
   const rowLabels: RowData[] = init.rows.slice(1).map(r => ({
@@ -58,7 +58,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   }));
 
   const columnHeaders = init.antecedents.map(a => a.value);
-  const initRowCount = init.rows.length-1; //
+  const initRowCount = init.rows.length - 1; //
 
 
   const columnSeparators: ColumnSeparator[] = [];
@@ -70,7 +70,7 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   let row = 0;
 
   function checkRowCount(currentRow: number, initRowCount: number) {
-    
+
     if (currentRow > initRowCount) {
       throw new Error(`Row ${currentRow} exceeds the number of headers (${initRowCount})`);
     }
@@ -78,14 +78,14 @@ function transform(ast: TkzTabDocument): TableDataArgs {
 
 
   ast.body.forEach(cmd => {
-    if (cmd.type === 'tkzTabLine') { 
+    if (cmd.type === 'tkzTabLine') {
       row++;
       checkRowCount(row, initRowCount);
       processLine(cmd, row, columnSeparators, signs, forbiddenRegions);
     } else if (cmd.type === 'tkzTabVar') {
       row++;
       checkRowCount(row, initRowCount);
-      processVar(cmd, row, variationArrows, columnSeparators,forbiddenRegions);
+      processVar(cmd, row, variationArrows, columnSeparators, forbiddenRegions);
     }
   });
 
@@ -187,7 +187,7 @@ function processVar(
     const plusCount = modifier.split('').filter(c => c === '+').length;
     const minusCount = modifier.split('').filter(c => c === '-').length;
     const signCount = plusCount + minusCount;
-    if ((signCount === 0 || signCount > 2)&& modifier !== 'R') {
+    if ((signCount === 0 || signCount > 2) && modifier !== 'R') {
       throw new Error(`Unsupported modifier ${curr.modifier} for variation element at row ${row}, column ${i + 1}`);
     }
 
@@ -216,22 +216,25 @@ function processVar(
       );
     }
     else if (modifier === "+D" || modifier === "-D") {
+      const label = curr.left?.value;
+      console.log(curr)
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
           column: i + 1,
           row,
-          labels: makeLabel(curr.left?.value, modifier === '+D' ? 'top' : 'bottom', 'left')
+          labels: makeLabel(label, modifier === '+D' ? 'top' : 'bottom', 'left')
         }
       );
     }
     else if (modifier === "D+" || modifier === "D-") {
+      const label = curr.left?.value;
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
           column: i + 1,
           row,
-          labels: makeLabel(curr.left?.value, modifier === 'D+' ? 'top' : 'bottom', 'right')
+          labels: makeLabel(label, modifier === 'D+' ? 'top' : 'bottom', 'right')
         }
       );
     }
@@ -247,13 +250,14 @@ function processVar(
       );
     }
     else if (modifier === "+DH" || modifier === "-DH") {
+      const label = curr.left?.value;
       forbiddenRegions.push({ row, columnStart: i + 1, columnEnd: i + 2 });
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
           column: i + 1,
           row,
-          labels: makeLabel(curr.left?.value, modifier === '+DH' ? 'top' : 'bottom', 'left')
+          labels: makeLabel(label, modifier === '+DH' ? 'top' : 'bottom', 'left')
         }
       );
     }
@@ -279,7 +283,7 @@ function processVar(
       const firstLabelHPosition = type === 'CD' ? 'center' : 'left';
       const secondLabelHPosition = type === 'DC' ? 'center' : 'right';
       const firstLabelValue = curr.left?.value ?? '';
-      const secondLabelValue = curr.right?.value ?? '';
+      const secondLabelValue = '';
       const firstLabel = makeLabel(firstLabelValue, firstLabelVPosition, firstLabelHPosition);
       const secondLabel = makeLabel(secondLabelValue, secondLabelVPosition, secondLabelHPosition);
       const labels = [...firstLabel, ...secondLabel];
@@ -337,11 +341,11 @@ function processVar(
       }
     }
 
-    if(currSign){
-      lastSign = {...currSign}
-      if(!currSign.right){
-        lastSign.right = currSign.left ;
-      } 
+    if (currSign) {
+      lastSign = { ...currSign }
+      if (!currSign.right) {
+        lastSign.right = currSign.left;
+      }
     }
   }
 }
