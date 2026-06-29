@@ -327,6 +327,7 @@ function processVar(
           arrowHeadPosition: 'end',
           startColumn: lastSign.column,
           endColumn: currSign.column,
+          position : "top",
           row,
         });
       }
@@ -336,6 +337,7 @@ function processVar(
           arrowHeadPosition: 'end',
           startColumn: lastSign.column,
           endColumn: currSign.column,
+          position : "bottom",
           row,
         });
       }
