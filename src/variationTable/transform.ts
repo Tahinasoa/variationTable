@@ -283,7 +283,7 @@ function processVar(
       const firstLabelHPosition = type === 'CD' ? 'center' : 'left';
       const secondLabelHPosition = type === 'DC' ? 'center' : 'right';
       const firstLabelValue = curr.left?.value ?? '';
-      const secondLabelValue = '';
+      const secondLabelValue = curr.right?.value ?? "";
       const firstLabel = makeLabel(firstLabelValue, firstLabelVPosition, firstLabelHPosition);
       const secondLabel = makeLabel(secondLabelValue, secondLabelVPosition, secondLabelHPosition);
       const labels = [...firstLabel, ...secondLabel];
