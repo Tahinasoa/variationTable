@@ -18,8 +18,6 @@ import type {
   TkzTabInit,
   TkzTabLine,
   TkzTabVar,
-  LineElementContent,
-  VarElement,
 } from './types';
 
 // ---------------------------------------------------------------------------
@@ -228,7 +226,7 @@ function processVar(
       );
     }
     else if (modifier === "D+" || modifier === "D-") {
-      const label = curr.left?.value;
+      const label = curr.left?.value || curr.right?.value ;
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
