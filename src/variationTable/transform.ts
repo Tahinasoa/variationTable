@@ -160,7 +160,7 @@ function processVar(
   const elements = varCmd.elements;
   let currSign: { column: number; left: '+' | '-', right?: '+' | '-' } | null = null;
   let lastSign: { column: number; left: '+' | '-', right?: '+' | '-' } | null = null;
-
+  let isForbiddenRegion = false ;
   for (let i = 0; i < elements.length; i++) {
     const curr = elements[i];
 
@@ -302,7 +302,7 @@ function processVar(
     //-----------------------------------------------------------
     // Process variation arrows
     //-----------------------------------------------------------
-    if (currSign !== null && lastSign !== null) {
+    if (!isForbiddenRegion && currSign !== null && lastSign !== null) {
       if (currSign.left === '+' && lastSign.right === '-') {
         variationArrows.push({
           type: VariationType.Increasing,
@@ -343,6 +343,7 @@ function processVar(
       }
     }
 
+    isForbiddenRegion = modifier.includes("H") ;
     if (currSign) {
       lastSign = { ...currSign }
       if (!currSign.right) {
