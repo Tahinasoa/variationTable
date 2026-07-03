@@ -1,4 +1,4 @@
-import VariationTable from './variationTable/VariationTable';
+import {VariationTable} from '@variation/core'
 import Editor from './Editor';
 import { useEffect, useState } from 'react';
 import { examples } from './examples';
