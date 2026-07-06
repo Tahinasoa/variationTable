@@ -26,5 +26,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           # IMPORTANT: Use 'dist' if you use Vite, or 'build' if you use Create React App
-          folder: dist 
+          folder: packages/demo/dist 
           branch: gh-pages
