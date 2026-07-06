@@ -2,6 +2,9 @@
 
 `VariationTable` is a high-performance React component designed to render LaTeX `tkz-tab` variation and sign tables directly in the browser, with no server-side compilation required.
 
+![](screenshots/img1.png)
+![](screenshots/img2.png)
+![](screenshots/img3.png)
 ---
 
 ## 💡 Why this project?
