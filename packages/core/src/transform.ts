@@ -215,7 +215,7 @@ function processVar(
     }
     else if (modifier === "+D" || modifier === "-D") {
       const label = curr.left?.value;
-      console.log(curr)
+
       columnSeparators.push(
         {
           type: SeparatorType.DoubleBar,
