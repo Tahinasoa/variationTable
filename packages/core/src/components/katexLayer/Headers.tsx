@@ -5,13 +5,13 @@ export function Headers({ tableData }: { tableData: TableData }) {
   /* Render headers : the values of 'x' */
   const headers: React.ReactElement[] = [];
   headers.push(
-    ...tableData.columnHeaders.map((value, i, headers) => {
+    ...tableData.columnHeaders.map((value, i) => {
       let className = styles.katexNode;
-      if (i === 0) {
+      /*if (i === 0) {
         className = `${styles.katexNode} ${styles.katexNodeLeftAligned}`;
       } else if (i === headers.length - 1) {
         className = `${styles.katexNode} ${styles.katexNodeRightAligned}`;
-      }
+      }*/
       return (
         <span
           key={`header${i}`}

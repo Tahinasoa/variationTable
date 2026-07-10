@@ -25,9 +25,9 @@ export function SVGLayer({
       {ArrowHeadDef}
       {HashPattern}
       <ForbiddenRegions tableData={tableData}/>
-      <TableOutline tableData={tableData} />
-      <RowSeparators tableData={tableData} />
       <ColumnSeparator tableData={tableData} />
+      <RowSeparators tableData={tableData} />
+      <TableOutline tableData={tableData} />
       <VariationArrows
         labelGeometry={measuredData.labelGeometry}
         tableData={tableData}
