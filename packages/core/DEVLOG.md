@@ -19,5 +19,6 @@ Suivi centralisé des anomalies, cas limites (edge cases) et décisions techniqu
 - [done] **Variations:** Gestion des `R/` (Remplissage vide) et `D+/` complexes.
 
 ## 💡 Notes techniques & Décisions
+TODO - aspect visuel & integration css.
 TODO - **Parser:** Migration vers `Zod` pour validation stricte de l'AST post-Peggy.
 TODO - **Renderer:** Isolation via `ErrorBoundary` fonctionnelle pour éviter les crashs globaux.

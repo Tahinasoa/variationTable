@@ -10,6 +10,9 @@ export function TableOutline({ tableData }: { tableData: TableData }) {
         height={tableData.height}
         fill="none"
         stroke="black"
+        strokeWidth={0.5}
+        vectorEffect="non-scaling-stroke"
+        shapeRendering="crispEdges"
       />
 
       {/* first column separator*/}
@@ -19,6 +22,9 @@ export function TableOutline({ tableData }: { tableData: TableData }) {
         x2={tableData.labelColumnWidth}
         y2={tableData.height}
         stroke="black"
+        strokeWidth={0.5}
+        vectorEffect="non-scaling-stroke"
+        shapeRendering="crispEdges"
       />
     </>
   );

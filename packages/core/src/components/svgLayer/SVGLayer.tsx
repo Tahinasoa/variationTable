@@ -19,11 +19,12 @@ export function SVGLayer({
   return (
     <svg
       className={styles.drawing}
-      viewBox={`0 0 ${tableData.width} ${tableData.height}`}
+      viewBox={`-1 -1 ${tableData.width+2} ${tableData.height+2}`} // The -1 and +2 are to make sure the stroke of the outline is not cut off
       preserveAspectRatio="xMidYMid meet"
     >
       {ArrowHeadDef}
       {HashPattern}
+      <ForbiddenRegions tableData={tableData}/>
       <TableOutline tableData={tableData} />
       <RowSeparators tableData={tableData} />
       <ColumnSeparator tableData={tableData} />
@@ -31,7 +32,6 @@ export function SVGLayer({
         labelGeometry={measuredData.labelGeometry}
         tableData={tableData}
       />
-      <ForbiddenRegions tableData={tableData}/>
     </svg>
   );
 }

@@ -96,8 +96,9 @@ export function VariationArrows({
           x2={x2}
           y1={y1}
           y2={y2}
-          strokeWidth={1}
           stroke="black"
+          strokeWidth={0.5}
+          vectorEffect="non-scaling-stroke"
           {...arrowHeadPosition}
         />
       );

@@ -4,8 +4,8 @@ export function ColumnSeparator({ tableData }: { tableData: TableData }) {
   const columnSeparators: React.ReactElement[] = tableData.columnSeparators
     .map((sep, i) => {
       // Constants at top of component
-      const STROKE_WIDTH = 1;
-      const DOUBLE_BAR_SPACING = 3;
+      const STROKE_WIDTH = 0.5;
+      const DOUBLE_BAR_SPACING = 1.5;
       const DASH_PATTERN = '2,3';
       if (sep.type === SeparatorType.None) return null;
 
@@ -19,6 +19,8 @@ export function ColumnSeparator({ tableData }: { tableData: TableData }) {
         y2,
         stroke: 'black',
         strokeWidth: STROKE_WIDTH,
+        vectorEffect: "non-scaling-stroke",
+        shapeRendering: "crispEdges"
       };
 
       switch (sep.type) {
@@ -39,6 +41,7 @@ export function ColumnSeparator({ tableData }: { tableData: TableData }) {
         case SeparatorType.DoubleBar:
           return (
             <g key={key}>
+              <rect x={x - DOUBLE_BAR_SPACING} y={y1} width={2*DOUBLE_BAR_SPACING} height={y2 - y1} fill="white" />
               <line
                 x1={x - DOUBLE_BAR_SPACING}
                 x2={x - DOUBLE_BAR_SPACING}
@@ -51,6 +54,7 @@ export function ColumnSeparator({ tableData }: { tableData: TableData }) {
               />
             </g>
           );
+
         case SeparatorType.DoubleDashed:
           return (
             <g key={key}>
