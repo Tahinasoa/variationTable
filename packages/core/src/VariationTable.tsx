@@ -56,6 +56,10 @@ function VariationTable({ inputText }: { inputText: string }) {
       style={{
         width: `${tableData.width}px`,
         height: `${tableData.height}px`,
+        margin: 0,
+        padding: 0,
+        border: 'none',
+        boxSizing: 'border-box',
       }}
     >
       <SVGLayer tableData={tableData} measuredData={measuredData} />

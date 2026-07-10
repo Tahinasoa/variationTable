@@ -18,8 +18,8 @@ export function SVGLayer({
 }) {
   return (
     <svg
-      className={styles.drawing}
-      viewBox={`-1 -1 ${tableData.width+2} ${tableData.height+2}`} // The -1 and +2 are to make sure the stroke of the outline is not cut off
+      className={styles.svgLayer}
+      viewBox={`0 0 ${tableData.width} ${tableData.height}`}
       preserveAspectRatio="xMidYMid meet"
     >
       {ArrowHeadDef}

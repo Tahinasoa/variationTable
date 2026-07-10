@@ -8,12 +8,6 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 body {
   font-family: var(--font-sans);
   font-size: 14px;
@@ -68,10 +62,6 @@ body {
   margin-bottom: 12px;
 }
 
-.preview div {
-  margin: auto;
-}
-
 .cm-editor,
 .CodeMirror {
   flex: 1;
@@ -83,13 +73,6 @@ body {
 .CodeMirror-scroll {
   overflow: auto !important;
 }
-
-
-.katex {
-  font-size: 1em;
-  color: var(--text);
-}
-
 
 ::-webkit-scrollbar {
   width: 6px;
