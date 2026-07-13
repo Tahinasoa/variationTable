@@ -83,7 +83,7 @@
      KaTeX base overrides
      ========================= */
 
-.katex {
+:global(.katex) {
   font-size: 1em;
   line-height: 1;
 

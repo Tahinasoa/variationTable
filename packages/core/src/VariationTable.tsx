@@ -7,10 +7,11 @@ import {
   type HorizontalPosition,
   type VerticalPosition,
 } from './models/TableData';
-import { useMemo, useReducer } from 'react';
+import { memo, useMemo, useReducer } from 'react';
 import {
   parseToTableData
 } from './transform.ts';
+import { SeparatorLabelRef } from './components/katexLayer/SeparatorLabels.tsx';
 
 export interface LabelGeometry {
   // Data attributes
@@ -29,11 +30,20 @@ export interface LabelGeometry {
   right: number;
   bottom: number;
 }
-export interface MeasuredData {
+export type MeasuredData = {
   labelGeometry?: LabelGeometry[];
 }
 
-function VariationTable({ inputText }: { inputText: string }) {
+export type MeasurementAction  = MeasurementAction_labels; 
+export interface MeasurementAction_labels {
+  type: 'Labels';
+  payload:Map<string, SeparatorLabelRef>;
+}
+
+
+const VariationTable = memo(__VariationTable);
+
+function __VariationTable({ inputText }: { inputText: string }) {
   const { data, error } =
     useMemo(() => {
       return parseToTableData(inputText);
@@ -44,7 +54,8 @@ function VariationTable({ inputText }: { inputText: string }) {
     else return new TableData(data);
   }, [data]);
 
-  const [measuredData, setMeasurement] = useReducer(updateMeasurement, {});
+  const [measuredData, setDataMeasurement] = useReducer(measurementReducer,{});
+
 
   if (!tableData) {
     return <div>{error}</div>;
@@ -63,44 +74,49 @@ function VariationTable({ inputText }: { inputText: string }) {
       }}
     >
       <SVGLayer tableData={tableData} measuredData={measuredData} />
-      <KatexLayer tableData={tableData} setMeasurement={setMeasurement} />
+      <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} />
     </div>
   );
 }
 export default VariationTable;
 
-function updateMeasurement(
+
+function measurementReducer(
   currentMesurement: MeasuredData,
-  action: { type: string }
-): MeasuredData {
+  action: MeasurementAction): MeasuredData {
   switch (action.type) {
-    case 'measure':
-      const columnSeparatorLabel = 'columnSeparatorLabel';
-      const labels = document.querySelectorAll<HTMLSpanElement>(
-        '.' + columnSeparatorLabel
-      );
-
-      const extractedLabelData = Array.from(labels).map((label) => {
-        const rect = label.getBoundingClientRect();
-        return {
-          // Data attributes
-          row: Number(label.dataset.row),
-          column: Number(label.dataset.column),
-          vpos: label.dataset.vpos as VerticalPosition,
-          hpos: label.dataset.hpos as HorizontalPosition,
-
-          // Measurements
-          x: rect.x,
-          y: rect.y,
-          width: rect.width,
-          height: rect.height,
-          left: rect.left,
-          top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom,
-        };
-      });
-      return { labelGeometry: extractedLabelData };
+    case 'Labels':
+      return { labelGeometry: getLabelsMeasurements(action.payload) };
   }
   return currentMesurement;
+}
+
+
+function getLabelsMeasurements(labelRef: Map<string, SeparatorLabelRef>): LabelGeometry[] {
+  const labelGeometry: LabelGeometry[] = [];
+
+  labelRef.forEach((value) => {
+    if (value.type == 'separatorLabel') {
+      const rect = value.node.getBoundingClientRect();
+      labelGeometry.push({
+                  // Data attributes
+        row : value.row,
+        column : value.column,
+        vpos : value.vpos,
+        hpos : value.hpos,
+
+                  // Measurements
+        x : rect.x,
+        y : rect.y,
+        width : rect.width,
+        height : rect.height,
+        top : rect.top,
+        left : rect.left,
+        right : rect.right,
+        bottom : rect.bottom,
+      });
+    }
+  }
+  );
+  return labelGeometry;
 }

@@ -11,7 +11,6 @@ Living list of open work: known issues, pending tasks, and planned improvements.
 | ID | Component | Severity | Status | Description |
 |:---|:---|:---|:---|:---|
 | #07 | Packaging | High | Todo | SVG `id` collision — `<marker>`/`<pattern>` ids are global, not scoped by `<svg>` nesting; breaks with 2+ instances on one page |
-| #08 | Packaging | High | Todo | `document.querySelectorAll` in measurement pass queries the whole page instead of the component's own subtree |
 | #09 | Packaging | Medium | Todo | Global side-effect import of `katex.min.css` — no scoping, potential duplication/version conflicts with host app |
 | #10 | Packaging | Medium | Todo | CSS Modules must be pre-compiled before publishing — consumer's bundler can't be assumed to process `.module.css` |
 
