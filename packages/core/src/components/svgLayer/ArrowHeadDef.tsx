@@ -1,7 +1,7 @@
 export const ArrowHeadDef = (
   <defs>
     <marker
-      id="arrowhead"
+      id="variation_arrowhead"
       viewBox="0 0 10 10"
       refX="9"
       refY="5"
@@ -15,12 +15,12 @@ export const ArrowHeadDef = (
   </defs>
 );
 
-export const ArrowHeadId = "arrowhead";
+export const ArrowHeadId = "variation_arrowhead";
 
 export const HashPattern = (
   <defs>
     <pattern
-      id="hashPattern"
+      id="variation_hashPattern"
       width="4"
       height="4"
       patternUnits="userSpaceOnUse"
@@ -31,4 +31,4 @@ export const HashPattern = (
   </defs>
 );
 
-export const HashPatternId = "hashPattern";
+export const HashPatternId = "variation_hashPattern";
