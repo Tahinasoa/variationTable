@@ -26,7 +26,7 @@ export const HashPattern = (
       patternUnits="userSpaceOnUse"
       patternTransform="rotate(-60)"
     >
-      <line x1="0" y1="0" x2="0" y2="6" stroke="#000" strokeWidth="1" />
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#000"/>
     </pattern>
   </defs>
 );

@@ -24,14 +24,19 @@ export function SVGLayer({
     >
       {ArrowHeadDef}
       {HashPattern}
-      <ForbiddenRegions tableData={tableData}/>
-      <ColumnSeparator tableData={tableData} />
-      <RowSeparators tableData={tableData} />
-      <TableOutline tableData={tableData} />
-      <VariationArrows
-        labelGeometry={measuredData.labelGeometry}
-        tableData={tableData}
-      />
+      <g stroke="black"
+        strokeWidth={0.5}
+        vectorEffect="non-scaling-stroke"
+        shapeRendering="crispEdges">
+        <ForbiddenRegions tableData={tableData} />
+        <ColumnSeparator tableData={tableData} />
+        <RowSeparators tableData={tableData} />
+        <TableOutline tableData={tableData} />
+        <VariationArrows
+          labelGeometry={measuredData.labelGeometry}
+          tableData={tableData}
+        />
+      </g>
     </svg>
   );
 }

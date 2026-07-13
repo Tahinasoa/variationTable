@@ -4,15 +4,11 @@ export function TableOutline({ tableData }: { tableData: TableData }) {
   return (
     <>
       <rect
-        x="0"
-        y="0"
-        width={tableData.width}
-        height={tableData.height}
+        x="0.25"
+        y="0.25"
+        width={tableData.width-0.5}
+        height={tableData.height-0.5}
         fill="none"
-        stroke="black"
-        strokeWidth={0.5}
-        vectorEffect="non-scaling-stroke"
-        shapeRendering="crispEdges"
       />
 
       {/* first column separator*/}
@@ -21,10 +17,6 @@ export function TableOutline({ tableData }: { tableData: TableData }) {
         y1={0}
         x2={tableData.labelColumnWidth}
         y2={tableData.height}
-        stroke="black"
-        strokeWidth={0.5}
-        vectorEffect="non-scaling-stroke"
-        shapeRendering="crispEdges"
       />
     </>
   );

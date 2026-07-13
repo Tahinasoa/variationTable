@@ -8,9 +8,7 @@ export function ForbiddenRegions({ tableData }: { tableData: TableData }) {
         const y1 = tableData.getNodeY(value.row);
         const y2 = tableData.getNodeY(value.row + 1);
 
-        return <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1} fill="url(#hashPattern)" stroke="black" strokeWidth={0.5}
-            vectorEffect="non-scaling-stroke"
-            shapeRendering="crispEdges" />
+        return <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1} fill="url(#hashPattern)" stroke="none" />
 
     })
     return regions

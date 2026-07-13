@@ -9,10 +9,6 @@ export function RowSeparators({ tableData }: { tableData: TableData }) {
         y1={tableData.getNodeY(i)}
         x2={tableData.width}
         y2={tableData.getNodeY(i)}
-        stroke="black"
-        strokeWidth={0.5}
-        vectorEffect="non-scaling-stroke"
-        shapeRendering="crispEdges"
         key={i}
       />
     );
