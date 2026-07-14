@@ -8,13 +8,17 @@ import { Signs } from "./Signs";
 import { SeparatorLabelRef, SeparatorLabels } from "./SeparatorLabels";
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
-import { MeasurementAction } from "../../VariationTable";
+import { MeasuredData, MeasurementAction } from "../../VariationTable";
+import { IntermediateAntecedents } from "./IntermediateAntecedents";
+import { IntermediateImages } from "./IntermediateImages";
 
 export function KatexLayer({
   tableData,
+  measuredData,
   setDataMeasurement,
 }: {
   tableData: TableData;
+  measuredData: MeasuredData;
   setDataMeasurement: React.Dispatch<MeasurementAction>;
 }) {
   const katexLayerRef = useRef<HTMLDivElement>(null);
@@ -44,6 +48,8 @@ export function KatexLayer({
       <Variable tableData={tableData} />
       <RowLabels tableData={tableData} />
       <Headers tableData={tableData} />
+      <IntermediateAntecedents tableData={tableData} />
+      <IntermediateImages tableData={tableData} measuredData={measuredData} />
       <Signs tableData={tableData} />
       <SeparatorLabels tableData={tableData} labelrefs={labelRef.current} />
     </div>

@@ -11,13 +11,17 @@ import {
   type VariationArrow,
   type ForbiddenRegion,
   ColumnSeparatorLabel,
+  IntermediateImage,
+  IntermediateAntecedent,
 } from './models/TableData.js';
 
 import type {
   TkzTabDocument,
   TkzTabInit,
   TkzTabLine,
+  TkzTabVal,
   TkzTabVar,
+  TkzTabIma
 } from './types';
 
 // ---------------------------------------------------------------------------
@@ -63,6 +67,8 @@ function transform(ast: TkzTabDocument): TableDataArgs {
   const variationArrows: VariationArrow[] = [];
   const signs: Sign[] = [];
   const forbiddenRegions: ForbiddenRegion[] = [];
+  const intermediateImages: IntermediateImage[] = [];
+  const intermediateAntecedents: IntermediateAntecedent[] = [];
 
   // Parcours dans l'ordre du document
   let row = 0;
@@ -85,9 +91,16 @@ function transform(ast: TkzTabDocument): TableDataArgs {
       checkRowCount(row, initRowCount);
       processVar(cmd, row, variationArrows, columnSeparators, forbiddenRegions);
     }
+    else if(cmd.type === 'tkzTabVal'){
+      processVal(cmd, row, intermediateAntecedents, intermediateImages);
+      console.log(cmd) ;
+    }
+    else if(cmd.type === 'tkzTabIma'){
+      processIma(cmd, row,  intermediateImages);
+    }
   });
 
-  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbiddenRegions };
+  return { variable, rowLabels, columnHeaders, columnSeparators, variationArrows, signs, forbiddenRegions, intermediateImages, intermediateAntecedents};
 }
 
 // ---------------------------------------------------------------------------
@@ -355,4 +368,52 @@ function makeLabel(value: string | undefined, vPos: 'top' | 'bottom', hPos: 'lef
   if (!value) return [];
   return [{ value, vPosition: vPos, hPosition: hPos }];
 }
-// //
+
+
+// ---------------------------------------------------------------------------
+// Process \tkzTabVal
+// ---------------------------------------------------------------------------
+function processVal(cmd: TkzTabVal, row: number, intermediateAntecedent: IntermediateAntecedent[], intermediateImage: IntermediateImage[]) {
+  if (cmd.antecedent) {
+    intermediateAntecedent.push({
+      row,
+      columnStart: cmd.startRank,
+      columnEnd: cmd.endRank,
+      position: cmd.position,
+      value: cmd.antecedent.value,
+    });
+  }
+  if(cmd.image){
+    intermediateImage.push({
+      row,
+      columnStart: cmd.startRank,
+      columnEnd: cmd.endRank,
+      position: cmd.position,
+      value: cmd.image.value,
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Process \tkzTabIma
+// ---------------------------------------------------------------------------
+function processIma(cmd: TkzTabIma, row: number, intermediateImage: IntermediateImage[]) {
+  if(cmd.startRank>cmd.endRank){
+    throw new Error("starting column of a tkzTabIma must be greater than end column") ;
+  }
+  else if(cmd.atRank<cmd.startRank || cmd.atRank>cmd.endRank){
+    throw new Error("atRank of a tkzTabIma must be between startRank and endRank") ;
+  }
+  
+  const position =cmd.startRank !== cmd.endRank ? (cmd.atRank - cmd.startRank) / (cmd.endRank - cmd.startRank) : 0;
+
+  if(cmd.image){
+    intermediateImage.push({
+      row,
+      columnStart: cmd.startRank,
+      columnEnd: cmd.endRank,
+      position: position,
+      value: cmd.image.value,
+    });
+  }
+}

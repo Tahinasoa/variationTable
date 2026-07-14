@@ -82,7 +82,7 @@ function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'li
         }}
       >
         <SVGLayer tableData={tableData} measuredData={measuredData} />
-        <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} />
+        <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} measuredData={measuredData} />
       </div>
     </div>
   );

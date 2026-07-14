@@ -67,6 +67,20 @@ export interface ForbiddenRegion {
   columnEnd: number;
 }
 
+export interface IntermediateImage {
+  row: number;
+  columnStart: number;
+  columnEnd: number;
+  position : number ;
+  value : string ;
+}
+export interface IntermediateAntecedent {
+  row: number;
+  columnStart: number;
+  columnEnd: number;
+  position : number ;
+  value : string ;
+}
 
 export interface TableDataArgs {
   variable: string | null;
@@ -76,6 +90,8 @@ export interface TableDataArgs {
   variationArrows: VariationArrow[];
   signs: Sign[];
   forbiddenRegions : ForbiddenRegion[] ;
+  intermediateAntecedents: IntermediateAntecedent[];
+  intermediateImages: IntermediateImage[];
 }
 export class TableData {
   // Data
@@ -86,6 +102,8 @@ export class TableData {
   variationArrows: VariationArrow[];
   signs: Sign[];
   forbiddenRegions:ForbiddenRegion[];
+  intermediateAntecedents: IntermediateAntecedent[];
+  intermediateImages: IntermediateImage[];
 
   readonly columnCount: number;
   readonly rowCount: number;
@@ -107,7 +125,9 @@ export class TableData {
     columnSeparators,
     variationArrows,
     signs,
-    forbiddenRegions
+    forbiddenRegions,
+    intermediateAntecedents,
+    intermediateImages
   }: TableDataArgs) {
     this.variable = variable;
     this.rowLabels = rowLabels;
@@ -116,6 +136,8 @@ export class TableData {
     this.variationArrows = variationArrows;
     this.signs = signs;
     this.forbiddenRegions = forbiddenRegions ;
+    this.intermediateAntecedents = intermediateAntecedents ;
+    this.intermediateImages = intermediateImages ;
     this.rowCount = this.rowLabels.length;
     this.columnCount = this.columnHeaders.length;
     this.width =
