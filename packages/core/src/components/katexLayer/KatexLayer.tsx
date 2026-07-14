@@ -5,40 +5,38 @@ import { Headers } from "./Headers";
 import { Variable } from "./Variable";
 import { useEffect, useRef } from "react";
 import { Signs } from "./Signs";
-import { SeparatorLabels } from "./SeparatorLabels";
+import { SeparatorLabelRef, SeparatorLabels } from "./SeparatorLabels";
 import renderMathInElement from 'katex/contrib/auto-render';
-import 'katex/dist/katex.min.css';
+import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
+import { MeasurementAction } from "../../VariationTable";
 
 export function KatexLayer({
   tableData,
-  setMeasurement,
+  setDataMeasurement,
 }: {
   tableData: TableData;
-  setMeasurement: React.ActionDispatch<
-    [
-      action: {
-        type: string;
-      }
-    ]
-  >;
+  setDataMeasurement: React.Dispatch<MeasurementAction>;
 }) {
   const katexLayerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!katexLayerRef.current) return;
+  const labelRef = useRef<Map<string, SeparatorLabelRef>>(new Map());
 
-    try {
-      renderMathInElement(katexLayerRef.current, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false },
-        ],
-        throwOnError: false,
-      });
-    } catch (e) {
-      console.log("Katex auto renderer not loaded");
+  useEffect(() => {
+    if (katexLayerRef.current) {
+      try {
+        renderMathInElement(katexLayerRef.current, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+          ],
+          throwOnError: false,
+        });
+      } catch (e) {
+        console.log("Katex auto renderer not loaded");
+      }
     }
 
-    setMeasurement({ type: "measure" });
+    setDataMeasurement({ type: "Labels", payload: labelRef.current });
+
   }, [tableData]);
 
   return (
@@ -47,7 +45,7 @@ export function KatexLayer({
       <RowLabels tableData={tableData} />
       <Headers tableData={tableData} />
       <Signs tableData={tableData} />
-      <SeparatorLabels tableData={tableData} />
+      <SeparatorLabels tableData={tableData} labelrefs={labelRef.current} />
     </div>
   );
 }

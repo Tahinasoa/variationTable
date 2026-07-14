@@ -2,57 +2,60 @@
    Root container
    ========================= */
 
+
+/* Dark Theme */
+.dark {
+  --dark_stroke: #ffffff;
+  --dark_fill: #222222;
+  --dark_bg: #222222;
+  --dark_color: #ffffff;
+}
+
 .canvas {
   position: relative;
-  width: 100%;
-  height: 100%;
-
-  /* Prevent layout shifts across browsers */
+  display: block;
+  box-sizing: border-box;
   overflow: hidden;
+  background-color: var(--dark_bg,white);
+  transform :  translateX(-50%);
+  left : 50%;
 
-  /* Improves text rendering consistency */
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* =========================
-     SVG drawing layer
+     - SVG drawing layer
+     - KaTeX overlay layer
      ========================= */
 
-.drawing {
+.svgLayer,
+.katexLayer {
   display: block;
   position: absolute;
-  left: 0px;
-  top: 0px;
   inset: 0;
   width: 100%;
   height: 100%;
-
-  /* Prevent SVG from intercepting text selection */
-  user-select: none;
+  pointer-events: none;
 }
 
-/* =========================
-     KaTeX overlay layer
-     ========================= */
+.svgLayer {
+  user-select: none;
+  stroke: var(--dark_stroke,black);
+  fill:var(--dark_fill,white) ;
+}
+.arrowhead{
+  fill : var(--dark_stroke,black) ;
+}
 
 .katexLayer {
-  position: absolute;
-  inset: 0;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-
-  /* Overlay behavior */
-  pointer-events: none;
-
-  /* Prevent reflow glitches in Safari */
   contain: layout style paint;
-
-  /* Text alignment consistency */
   white-space: nowrap;
+  color : var(--dark_color,black) ;
+  background-color: #00000000;
 }
+
 
 /* =========================
      Individual KaTeX nodes
@@ -79,7 +82,7 @@
 
 }
 .katexSubNode{
-  background-color: white;
+  background-color: var(--dark_bg,white);
 }
 
 .katexNodeLeftAligned {
@@ -99,7 +102,7 @@
      KaTeX base overrides
      ========================= */
 
-.katex {
+:global(.katex) {
   font-size: 1em;
   line-height: 1;
 
@@ -110,11 +113,16 @@
 /* =========================
      Debug helpers
      ========================= */
-
-.canvas.debug .katex-layer {
-  outline: 1px dashed rgba(255, 0, 0, 0.4);
+.canvas.debug  {
+  background-color : #f0f0f0;
 }
 
-.canvas.debug .drawing {
-  outline: 1px dashed rgba(0, 0, 255, 0.4);
+.canvas.debug .katexLayer {
+  box-shadow: inset 0 0 0 2px blue;
+  opacity: 1;
+}
+
+.canvas.debug .svgLayer {
+  box-shadow: inset 0 0 0 2px red;
+  opacity: 1;
 }

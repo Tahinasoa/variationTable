@@ -49,10 +49,11 @@ import {VariationTable} from '@variation/core'
 const MyComponent = () => {
   const latexCode = `\\begin{tikzpicture} ... \\end{tikzpicture}`;
   
-  return <VariationTable inputText={latexCode} />;
+  return <VariationTable inputText={latexCode} theme="dark"/>;
 };
 
 ```
+Theme can be `light` or `dark` and is optional.
 
 *If a syntax or logic error is detected, the component automatically displays a descriptive error message instead of the table.*
 

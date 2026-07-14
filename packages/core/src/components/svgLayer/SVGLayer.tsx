@@ -18,20 +18,25 @@ export function SVGLayer({
 }) {
   return (
     <svg
-      className={styles.drawing}
+      className={styles.svgLayer}
       viewBox={`0 0 ${tableData.width} ${tableData.height}`}
       preserveAspectRatio="xMidYMid meet"
     >
       {ArrowHeadDef}
       {HashPattern}
-      <TableOutline tableData={tableData} />
-      <RowSeparators tableData={tableData} />
-      <ColumnSeparator tableData={tableData} />
-      <VariationArrows
-        labelGeometry={measuredData.labelGeometry}
-        tableData={tableData}
-      />
-      <ForbiddenRegions tableData={tableData}/>
+      <g 
+        strokeWidth={0.5}
+        vectorEffect="non-scaling-stroke"
+        shapeRendering="crispEdges">
+        <ForbiddenRegions tableData={tableData} />
+        <ColumnSeparator tableData={tableData} />
+        <RowSeparators tableData={tableData} />
+        <TableOutline tableData={tableData} />
+        <VariationArrows
+          labelGeometry={measuredData.labelGeometry}
+          tableData={tableData}
+        />
+      </g>
     </svg>
   );
 }

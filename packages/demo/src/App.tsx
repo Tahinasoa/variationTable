@@ -2,10 +2,12 @@ import {VariationTable} from '@variation/core'
 import Editor from './Editor';
 import { useEffect, useState } from 'react';
 import { examples } from './examples';
+import { ThemeToggle } from './ThemeToggle';
 
 function App() {
   const [input, setInput] =
     useState<string>(examples["default"]);
+  const [isDark, setIsDark] = useState<boolean>(false);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -33,7 +35,9 @@ function App() {
         <Editor input={input} setInput={setInput} />
       </div>
       <div className="preview">
-        <VariationTable inputText={input} />
+        <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
+        <VariationTable inputText={input} theme={isDark ? 'dark' : 'light'} />
+        <VariationTable inputText={input} theme={isDark ? 'dark' : 'light'} />
       </div>
     </>
   );

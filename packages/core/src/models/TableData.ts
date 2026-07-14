@@ -97,7 +97,7 @@ export class TableData {
   readonly headerRowHeight = 50;
   readonly standardColumnWidth = 120;
   readonly baseRowHeight = 60;
-  readonly headerLeftRightMargin = 10;
+  readonly headerLeftRightMargin = 30;
   readonly LabelsTopBottomMargin = 10;
 
   constructor({
