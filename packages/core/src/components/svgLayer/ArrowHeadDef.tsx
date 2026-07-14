@@ -1,3 +1,5 @@
+import styles from "../../VariationTable.module.css";
+
 export const ArrowHeadDef = (
   <defs>
     <marker
@@ -10,7 +12,7 @@ export const ArrowHeadDef = (
       orient="auto-start-reverse"
       markerUnits="userSpaceOnUse"
     >
-      <path d="M 0 0 L 10 5 L 0 10 L 3 5 z" fill="black" />
+      <path d="M 0 0 L 10 5 L 0 10 L 3 5 z" className={styles.arrowhead} />
     </marker>
   </defs>
 );
@@ -26,7 +28,7 @@ export const HashPattern = (
       patternUnits="userSpaceOnUse"
       patternTransform="rotate(-60)"
     >
-      <line x1="0" y1="0" x2="0" y2="6" stroke="#000"/>
+      <line x1="0" y1="0" x2="0" y2="6"/>
     </pattern>
   </defs>
 );

@@ -24,7 +24,7 @@ export function SVGLayer({
     >
       {ArrowHeadDef}
       {HashPattern}
-      <g stroke="black"
+      <g 
         strokeWidth={0.5}
         vectorEffect="non-scaling-stroke"
         shapeRendering="crispEdges">

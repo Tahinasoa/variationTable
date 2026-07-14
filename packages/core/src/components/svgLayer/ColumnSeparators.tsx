@@ -35,7 +35,7 @@ export function ColumnSeparator({ tableData }: { tableData: TableData }) {
         case SeparatorType.DoubleBar:
           return (
             <g key={key}>
-              <rect x={x - DOUBLE_BAR_SPACING} y={y1} width={2*DOUBLE_BAR_SPACING} height={y2 - y1} fill="white" />
+              <rect x={x - DOUBLE_BAR_SPACING} y={y1} width={2*DOUBLE_BAR_SPACING} height={y2 - y1}  />
               <line
                 x1={x - DOUBLE_BAR_SPACING}
                 x2={x - DOUBLE_BAR_SPACING}

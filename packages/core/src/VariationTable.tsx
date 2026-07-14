@@ -34,16 +34,16 @@ export type MeasuredData = {
   labelGeometry?: LabelGeometry[];
 }
 
-export type MeasurementAction  = MeasurementAction_labels; 
+export type MeasurementAction = MeasurementAction_labels;
 export interface MeasurementAction_labels {
   type: 'Labels';
-  payload:Map<string, SeparatorLabelRef>;
+  payload: Map<string, SeparatorLabelRef>;
 }
 
 
 const VariationTable = memo(__VariationTable);
 
-function __VariationTable({ inputText }: { inputText: string }) {
+function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'light' | 'dark' }) {
   const { data, error } =
     useMemo(() => {
       return parseToTableData(inputText);
@@ -54,7 +54,7 @@ function __VariationTable({ inputText }: { inputText: string }) {
     else return new TableData(data);
   }, [data]);
 
-  const [measuredData, setDataMeasurement] = useReducer(measurementReducer,{});
+  const [measuredData, setDataMeasurement] = useReducer(measurementReducer, {});
 
 
   if (!tableData) {
@@ -63,18 +63,27 @@ function __VariationTable({ inputText }: { inputText: string }) {
 
   return (
     <div
-      className={styles.canvas}
       style={{
-        width: `${tableData.width}px`,
-        height: `${tableData.height}px`,
-        margin: 0,
-        padding: 0,
-        border: 'none',
-        boxSizing: 'border-box',
+        display: 'flow-root',
+        isolation: 'isolate', // Prevents parent z-index/blending interference
+        contain: 'layout style paint', // Stops layout shifts, style inheritance, and painting leaks
       }}
+      className={theme === 'dark' ? styles.dark : styles.light}
     >
-      <SVGLayer tableData={tableData} measuredData={measuredData} />
-      <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} />
+      <div
+        className={styles.canvas}
+        style={{
+          width: `${tableData.width}px`,
+          height: `${tableData.height}px`,
+          margin: 0,
+          padding: 0,
+          border: 'none',
+          boxSizing: 'border-box',
+        }}
+      >
+        <SVGLayer tableData={tableData} measuredData={measuredData} />
+        <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} />
+      </div>
     </div>
   );
 }
@@ -99,21 +108,21 @@ function getLabelsMeasurements(labelRef: Map<string, SeparatorLabelRef>): LabelG
     if (value.type == 'separatorLabel') {
       const rect = value.node.getBoundingClientRect();
       labelGeometry.push({
-                  // Data attributes
-        row : value.row,
-        column : value.column,
-        vpos : value.vpos,
-        hpos : value.hpos,
+        // Data attributes
+        row: value.row,
+        column: value.column,
+        vpos: value.vpos,
+        hpos: value.hpos,
 
-                  // Measurements
-        x : rect.x,
-        y : rect.y,
-        width : rect.width,
-        height : rect.height,
-        top : rect.top,
-        left : rect.left,
-        right : rect.right,
-        bottom : rect.bottom,
+        // Measurements
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
       });
     }
   }

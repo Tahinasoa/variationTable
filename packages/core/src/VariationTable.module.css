@@ -2,11 +2,23 @@
    Root container
    ========================= */
 
+
+/* Dark Theme */
+.dark {
+  --dark_stroke: #ffffff;
+  --dark_fill: #222222;
+  --dark_bg: #222222;
+  --dark_color: #ffffff;
+}
+
 .canvas {
   position: relative;
   display: block;
   box-sizing: border-box;
   overflow: hidden;
+  background-color: var(--dark_bg,white);
+  transform :  translateX(-50%);
+  left : 50%;
 
 
   -webkit-font-smoothing: antialiased;
@@ -30,11 +42,18 @@
 
 .svgLayer {
   user-select: none;
+  stroke: var(--dark_stroke,black);
+  fill:var(--dark_fill,white) ;
+}
+.arrowhead{
+  fill : var(--dark_stroke,black) ;
 }
 
 .katexLayer {
   contain: layout style paint;
   white-space: nowrap;
+  color : var(--dark_color,black) ;
+  background-color: #00000000;
 }
 
 
@@ -63,7 +82,7 @@
 
 }
 .katexSubNode{
-  background-color: white;
+  background-color: var(--dark_bg,white);
 }
 
 .katexNodeLeftAligned {
