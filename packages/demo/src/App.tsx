@@ -37,7 +37,6 @@ function App() {
       <div className="preview">
         <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
         <VariationTable inputText={input} theme={isDark ? 'dark' : 'light'} />
-        <VariationTable inputText={input} theme={isDark ? 'dark' : 'light'} />
       </div>
     </>
   );
