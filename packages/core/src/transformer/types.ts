@@ -157,7 +157,7 @@ export interface LayoutData {
   rowLabels: RowLabel[]; //include the labels of each row and the variableRow
   columnHeaders: ColumnHeaderLabel[];
   lineContents: LineContentLabel[];
-  columnSeparatorLabels: ColumnSeparatorLabel[];
+  columnSeparatorLabels: ColumnSeparatorLabel[]; //Labels for variation arrows and TkzSlope.
   intermediateImages: IntermediateImageLabel[];
   intermediateAntecedents: IntermediateAntecedentLabel[];
 

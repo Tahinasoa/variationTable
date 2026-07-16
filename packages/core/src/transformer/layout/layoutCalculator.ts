@@ -1,12 +1,12 @@
-
 import { TkzTabDocument, TkzTabInit } from "../../parser/types";
 import { LayoutConfig } from "../layoutConfig";
+import { LayoutData, Segment, LineContentLabel, IntermediateImageLabel, IntermediateAntecedentLabel, LayoutColumnSeparator, LayoutVariationArrow, LayoutForbiddenRegion, ColumnSeparatorLabel } from "../types";
 import { processTkzTabLine } from "./commands/processTkzTabLine";
+import { processTkzTabVar } from "./commands/processTkzTabVar";
 import { getRowBoundaries, getTableWidth } from "./geometry";
 import { getColumnHeaders } from "./init/getColumnHeaders";
 import { getGrid } from "./init/getGrid";
 import { getRowLabels } from "./init/getRowLabels";
-import { IntermediateAntecedentLabel, IntermediateImageLabel, LayoutColumnSeparator, LayoutData, LayoutForbiddenRegion, LayoutVariationArrow, LineContentLabel, Segment } from "./types";
 
 export function calculateLayout(ast: TkzTabDocument, config: LayoutConfig): LayoutData {
     if (ast.body[0].type !== "tkzTabInit") {
@@ -30,6 +30,7 @@ export function calculateLayout(ast: TkzTabDocument, config: LayoutConfig): Layo
     });
 
     const rowBoundaries = getRowBoundaries(init.rows, config);
+    const maxRowIndex = init.rows.length - 1; // max body row index (row 0 is the header)
     const antecedentCount = init.antecedents.length;
     const width = getTableWidth(antecedentCount, config);
     const height = rowBoundaries[rowBoundaries.length - 1];
@@ -42,13 +43,29 @@ export function calculateLayout(ast: TkzTabDocument, config: LayoutConfig): Layo
     const intermediateImages: IntermediateImageLabel[] = [];
     const intermediateAntecedents: IntermediateAntecedentLabel[] = [];
     const columnSeparators: LayoutColumnSeparator[] = [];
+    const columnSeparatorLabels: ColumnSeparatorLabel[] = [];
     const variationArrows: LayoutVariationArrow[] = [];
     const forbiddenRegions: LayoutForbiddenRegion[] = [];
 
-    let currentRowIndex = 1; // as row (0) is for headers ;
-    ast.body.forEach((cmd, i) => {
+    let currentRowIndex = 1; // row 0 is for headers
+
+    ast.body.forEach((cmd) => {
         if (cmd.type === 'tkzTabLine') {
-            processTkzTabLine(cmd, currentRowIndex, config, rowBoundaries);
+            checkRowCount(currentRowIndex, maxRowIndex);
+            const result = processTkzTabLine(cmd, currentRowIndex, rowBoundaries, config);
+            lineContents.push(...result.lineContents);
+            columnSeparators.push(...result.columnSeparators);
+            columnSeparatorLabels.push(...result.columnSeparatorLabels);
+            forbiddenRegions.push(...result.forbiddenRegions);
+            currentRowIndex++;
+        }
+        if (cmd.type === 'tkzTabVar') {
+            checkRowCount(currentRowIndex, maxRowIndex);
+            const result = processTkzTabVar(cmd, currentRowIndex, rowBoundaries, config);
+            columnSeparators.push(...result.columnSeparators);
+            columnSeparatorLabels.push(...result.columnSeparatorLabels);
+            variationArrows.push(...result.variationArrows);
+            forbiddenRegions.push(...result.forbiddenRegions);
             currentRowIndex++;
         }
     })
@@ -63,8 +80,17 @@ export function calculateLayout(ast: TkzTabDocument, config: LayoutConfig): Layo
         intermediateImages,
         intermediateAntecedents,
         columnSeparators,
+        columnSeparatorLabels,
         variationArrows,
         forbiddenRegions,
         grid,
     };
+}
+
+function checkRowCount(currentRowIndex: number, maxRowIndex: number) {
+    if (currentRowIndex > maxRowIndex) {
+        throw new Error(
+            `Row ${currentRowIndex} exceeds the number of declared body rows (${maxRowIndex})`
+        );
+    }
 }

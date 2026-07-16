@@ -5,6 +5,7 @@ export interface LayoutConfig {
   baseRowHeight: number;
   headerLeftRightMargin: number;
   labelsTopBottomMargin: number;
+  labelsLeftRightMargin : number ;
   strokeWidth: number;
 }
 
@@ -15,6 +16,7 @@ export const defaultLayoutConfig: LayoutConfig = {
   baseRowHeight: 60,
   headerLeftRightMargin: 30,
   labelsTopBottomMargin: 10,
+  labelsLeftRightMargin : 5,
   strokeWidth: 1.5,
 };
 
