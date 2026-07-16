@@ -41,16 +41,16 @@ export function processTkzTabVar(
   const variationArrows: LayoutVariationArrow[] = [];
   const forbiddenRegions: LayoutForbiddenRegion[] = [];
 
-  const rowTop = rowBoundaries[row];
+  const rowTop = rowBoundaries[row] ;
   const rowBottom = rowBoundaries[row + 1];
 
 
-function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,hPosition:HorizontalPosition) {
-    const x = getNodeX(columnSeparatorIndex, config) ;
+function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition) {
+    const x = getNodeX(columnSeparatorIndex, config)
     const y =
       vPosition === "top"
-        ? rowTop + config.labelsTopBottomMargin
-        : rowBottom - config.labelsTopBottomMargin;
+        ? rowTop + config.labelsTopBottomMargin 
+        : rowBottom - config.labelsTopBottomMargin ;
     return { x, y };
   }
 
@@ -67,7 +67,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
         row,
         columnSeparatorIndex,
         value,
-        anchor: labelAnchor(columnSeparatorIndex, vPosition,hPosition),
+        anchor: labelAnchor(columnSeparatorIndex, vPosition),
         vPosition,
         hPosition,
       },
@@ -198,6 +198,8 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
     if (!isForbiddenRegion && currSign !== null && lastSign !== null) {
       const startX = getNodeX(lastSign.columnSeparatorIndex, config);
       const endX = getNodeX(currSign.columnSeparatorIndex, config);
+      const yTop = rowTop+config.labelsTopBottomMargin ;
+      const yBottom = rowBottom - config.labelsTopBottomMargin ;
 
       if (currSign.left === "+" && lastSign.right === "-") {
         variationArrows.push({
@@ -206,7 +208,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
           columnSeparatorStart: lastSign.columnSeparatorIndex,
           columnSeparatorEnd: currSign.columnSeparatorIndex,
           row,
-          path: { start: { x: startX, y: rowBottom }, end: { x: endX, y: rowTop } },
+          originalPath : { start: { x: startX, y: yBottom }, end: { x: endX, y: yTop } },
         });
       } else if (currSign.left === "-" && lastSign.right === "+") {
         variationArrows.push({
@@ -215,7 +217,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
           columnSeparatorStart: lastSign.columnSeparatorIndex,
           columnSeparatorEnd: currSign.columnSeparatorIndex,
           row,
-          path: { start: { x: startX, y: rowTop }, end: { x: endX, y: rowBottom } },
+          originalPath: { start: { x: startX, y: yTop }, end: { x: endX, y: yBottom } },
         });
       } else if (currSign.left === "+" && lastSign.right === "+") {
         variationArrows.push({
@@ -225,7 +227,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
           columnSeparatorStart: lastSign.columnSeparatorIndex,
           columnSeparatorEnd: currSign.columnSeparatorIndex,
           row,
-          path: { start: { x: startX, y: rowTop }, end: { x: endX, y: rowTop } },
+          originalPath: { start: { x: startX, y: yTop }, end: { x: endX, y: yTop } },
         });
       } else if (currSign.left === "-" && lastSign.right === "-") {
         variationArrows.push({
@@ -235,7 +237,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
           columnSeparatorStart: lastSign.columnSeparatorIndex,
           columnSeparatorEnd: currSign.columnSeparatorIndex,
           row,
-          path: { start: { x: startX, y: rowBottom }, end: { x: endX, y: rowBottom } },
+          originalPath: { start: { x: startX, y: yBottom }, end: { x: endX, y: yBottom } },
         });
       }
     }

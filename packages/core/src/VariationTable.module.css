@@ -86,10 +86,10 @@
 }
 
 .katexNodeLeftAligned {
-  --translate-x: 5px; /* left edge */
+  --translate-x: calc(-100% - 5px); 
 }
 .katexNodeRightAligned {
-  --translate-x: calc(-100% - 5px); /* right edge */
+  --translate-x: 5px; 
 }
 .katexNodeTopAligned {
   --translate-y: 0px; /* top edge */
@@ -119,7 +119,7 @@
 
 .canvas.debug .katexLayer {
   box-shadow: inset 0 0 0 2px blue;
-  opacity: 1;
+  opacity: 0.3 ;
 }
 
 .canvas.debug .svgLayer {

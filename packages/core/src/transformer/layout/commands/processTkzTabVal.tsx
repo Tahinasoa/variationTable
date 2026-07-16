@@ -1,0 +1,55 @@
+import { TkzTabVal } from "../../../parser/types";
+import { IntermediateAntecedentLabel, IntermediateImageLabel, LayoutVariationArrow } from "../../types";
+import { getInterNodeY } from "../geometry";
+
+export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariationArrow[], rowBoundaries: number[]): { image: IntermediateImageLabel | null, antecedent: IntermediateAntecedentLabel | null } {
+    if (!cmd.image) return {image:null, antecedent:null};
+    //TkzTab uses 1-based index, and our system uses 0 based index so we should fix that
+    const localStart = cmd.startRank - 1;
+    const localEnd = cmd.endRank - 1;
+
+    const matchingArrow = variationArrows.find(arrow =>
+        arrow.columnSeparatorStart === localStart && arrow.columnSeparatorEnd === localEnd
+    );
+
+    if (!matchingArrow) {
+        throw new Error(`Could not process tkzTabIma, it doesn't match to any arrow`);
+    }
+
+    const x = matchingArrow.originalPath.start.x * (1 - cmd.position) + matchingArrow.originalPath.end.x * cmd.position;
+    const img_y = matchingArrow.originalPath.start.y * (1 - cmd.position) + matchingArrow.originalPath.end.y * cmd.position;
+    const ant_y = getInterNodeY(0,1,rowBoundaries);
+
+
+    let image: IntermediateImageLabel | null = null;
+    if (cmd.image.value) {
+        image = {
+            role: "intermediateImage",
+            row: 0,
+            columnSeparatorStart: localStart,
+            columnSeparatorEnd: localEnd,
+            position: cmd.position,
+            value: cmd.image.value,
+            anchor: { x, y: img_y },
+            vPosition: "top",
+            hPosition: "center"
+        }
+    }
+
+    let antecedent: IntermediateAntecedentLabel | null = null;
+    if (cmd.antecedent) {
+        antecedent = {
+            role: "intermediateAntecedent",
+            row: 0,
+            columnSeparatorStart: localStart,
+            columnSeparatorEnd: localEnd,
+            position: cmd.position,
+            value: cmd.antecedent?.value,
+            anchor: { x, y: ant_y },
+            vPosition: "top",
+            hPosition: "center"
+        }
+    }
+
+    return { image, antecedent }
+}

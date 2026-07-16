@@ -17,7 +17,7 @@ export const defaultLayoutConfig: LayoutConfig = {
   headerLeftRightMargin: 30,
   labelsTopBottomMargin: 10,
   labelsLeftRightMargin : 5,
-  strokeWidth: 1.5,
+  strokeWidth: 1,
 };
 
 export function resolveLayoutConfig(

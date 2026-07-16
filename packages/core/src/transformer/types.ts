@@ -1,4 +1,4 @@
-import { LayoutConfig } from "./LayoutConfig";
+import { LayoutConfig } from "./layoutConfig";
 
 
 // ---------------------------------------------------------------------------
@@ -132,8 +132,9 @@ export interface LayoutVariationArrow {
   columnSeparatorStart: number;
   columnSeparatorEnd: number;
   row: number;
+  originalPath: Segment; //path is th
   // Corrected by the geometric correction pass, after DOM measurement
-  path: Segment;
+  correctPath ? :Segment;
 }
 
 export interface LayoutForbiddenRegion {
