@@ -7,7 +7,7 @@ layoutData
   layoutData : LayoutData
 }):React.ReactNode {
   const arrows = layoutData.variationArrows.map((arrow,index)=>{
-    const path = arrow.correctPath || arrow.originalPath ;
+    const path = arrow.correctedPath || arrow.originalPath ;
     const x1 =path.start.x ;
     const y1 =path.start.y ;
     const x2 =path.end.x ;

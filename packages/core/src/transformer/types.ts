@@ -134,7 +134,7 @@ export interface LayoutVariationArrow {
   row: number;
   originalPath: Segment; //path is th
   // Corrected by the geometric correction pass, after DOM measurement
-  correctPath ? :Segment;
+  correctedPath ? :Segment;
 }
 
 export interface LayoutForbiddenRegion {

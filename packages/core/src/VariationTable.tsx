@@ -1,15 +1,17 @@
 import styles from './VariationTable.module.css';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { SVGLayer } from './components/svgLayer/SVGLayer';
-import { parseToLayoutData } from './transformer/transform';
 import { KatexLayer } from './components/katexLayer/KatexLayer';
+import { parseToLayoutData } from './transformer/transform';
+
 
 const VariationTable = memo(__VariationTable);
 
 function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'light' | 'dark' }) {
   const { layoutData, error } = useMemo(() => parseToLayoutData(inputText), [inputText]);
+  const [correctedLayoutData , setCorrectedLayoutData] = useState(layoutData) ;
 
-  if (!layoutData) {
+  if (!layoutData || !correctedLayoutData) {
     return <div>{error}</div>;
   }
 
@@ -23,18 +25,18 @@ function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'li
       className={theme === 'dark' ? styles.dark : styles.light}
     >
       <div
-        className={styles.canvas + ' ' + styles.debug}
+        className={styles.canvas}
         style={{
-          width: `${layoutData.width}px`,
-          height: `${layoutData.height}px`,
+          width: `${correctedLayoutData.width}px`,
+          height: `${correctedLayoutData.height}px`,
           margin: 0,
           padding: 0,
           border: 'none',
           boxSizing: 'border-box',
         }}
       >
-        <SVGLayer layoutData={layoutData} />
-        <KatexLayer layoutData={layoutData} />
+        <SVGLayer layoutData={correctedLayoutData} />
+        <KatexLayer layoutData={layoutData} layoutDataSetter={setCorrectedLayoutData} />
       </div>
     </div>
   );

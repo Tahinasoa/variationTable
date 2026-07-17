@@ -2,15 +2,20 @@ import styles from "../../VariationTable.module.css";
 import { useEffect, useRef } from "react";
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
-import { LayoutData } from "../../transformer/types";
+import { ColumnSeparatorLabel, LayoutData } from "../../transformer/types";
 import { Labels } from "./Labels";
+import { geometricCorrectionSetter } from "../../geometricCorrectionsetter";
 
 export function KatexLayer({
-  layoutData
+  layoutData,
+  layoutDataSetter
 }: {
-  layoutData:LayoutData
-}) {
+  layoutData:LayoutData,
+  layoutDataSetter: React.Dispatch<React.SetStateAction<LayoutData | undefined>>
+}) { 
+
   const katexLayerRef = useRef<HTMLDivElement>(null);
+  const labelRefs = useRef<Map<string, {node : HTMLElement, label : ColumnSeparatorLabel}>>(new Map());
 
   useEffect(() => {
     if (katexLayerRef.current) {
@@ -26,8 +31,7 @@ export function KatexLayer({
         console.log("Katex auto renderer not loaded");
       }
     }
-
-
+    layoutDataSetter(geometricCorrectionSetter(layoutData,labelRefs.current)) ;
   }, [layoutData]);
 
   return (
@@ -41,8 +45,11 @@ export function KatexLayer({
       ...layoutData.intermediateAntecedents,
       ...layoutData.intermediateImages,
     ]}
+    labelrefs={labelRefs.current}
   />
 </div>
 
   );
 }
+
+
