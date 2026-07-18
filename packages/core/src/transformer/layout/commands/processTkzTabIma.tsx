@@ -34,7 +34,7 @@ export function processTkzTabIma(cmd: TkzTabIma, variationArrows: LayoutVariatio
         position: localPosition,
         value: cmd.image.value,
         anchor: { x, y },
-        vPosition: "top",
+        vPosition: "center",
         hPosition: "center"
     }
 }

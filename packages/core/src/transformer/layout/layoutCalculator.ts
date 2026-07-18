@@ -92,6 +92,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     })
 
     return {
+        id : Math.ceil(Math.random()*1000),//an unique ID per parse.
         config,
         width,
         height,

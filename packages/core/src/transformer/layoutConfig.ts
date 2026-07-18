@@ -14,9 +14,9 @@ export const defaultLayoutConfig: LayoutConfig = {
   headerRowHeight: 50,
   standardColumnWidth: 120,
   baseRowHeight: 60,
-  headerLeftRightMargin: 30,
-  labelsTopBottomMargin: 10,
-  labelsLeftRightMargin : 5,
+  headerLeftRightMargin: 8,
+  labelsTopBottomMargin: 3,
+  labelsLeftRightMargin : 3,
   strokeWidth: 1,
 };
 

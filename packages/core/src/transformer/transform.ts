@@ -8,8 +8,9 @@ import { parse } from '../parser/parser.mjs';
 // ---------------------------------------------------------------------------
 // Parse
 // ---------------------------------------------------------------------------
-
-export function parseToLayoutData(input: string): { layoutData?: LayoutData ; error? : string } {
+export interface ParseToLayoutDataOutPut 
+  { layoutData?: LayoutData ; error? : string }
+export function parseToLayoutData(input: string): ParseToLayoutDataOutPut{
   let ast: TkzTabDocument;
   try {
     ast = parse(input) as TkzTabDocument;

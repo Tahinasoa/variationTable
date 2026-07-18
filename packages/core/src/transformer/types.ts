@@ -149,6 +149,7 @@ export interface LayoutForbiddenRegion {
 // ---------------------------------------------------------------------------
 
 export interface LayoutData {
+  id : number ;
   config: LayoutConfig;
 
   width: number;

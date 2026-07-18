@@ -5,12 +5,12 @@ export function getGrid(width:number, rowBoundaries:number[], config: LayoutConf
   const height = rowBoundaries[rowBoundaries.length - 1];
 
   const grid: Segment[] = [];
-
+  const m = config.strokeWidth/2 ; //make sure the lines are drawn inside the svgElement
   // Outline: top, bottom, left, right
-  grid.push({ start: { x: 0, y: 0 }, end: { x: width, y: 0 } });
-  grid.push({ start: { x: 0, y: height }, end: { x: width, y: height } });
-  grid.push({ start: { x: 0, y: 0 }, end: { x: 0, y: height } });
-  grid.push({ start: { x: width, y: 0 }, end: { x: width, y: height } });
+  grid.push({ start: { x: m, y: m }, end: { x: width-m, y: m } });
+  grid.push({ start: { x: m, y: height-m }, end: { x: width-m, y: height-m } });
+  grid.push({ start: { x: m, y: m }, end: { x: m, y: height-m } });
+  grid.push({ start: { x: width-m, y: m }, end: { x: width-m, y: height-m } });
 
   // Row separators: one horizontal line at each internal row boundary
   // (excludes the very top and the very bottom, already part of the outline)

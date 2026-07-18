@@ -1,21 +1,22 @@
 import styles from "../../VariationTable.module.css";
-import { useEffect, useRef } from "react";
+import { CSSProperties, useEffect, useRef } from "react";
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
 import { ColumnSeparatorLabel, LayoutData } from "../../transformer/types";
 import { Labels } from "./Labels";
-import { geometricCorrectionSetter } from "../../geometricCorrectionsetter";
+import { geometricCorrectionSetter } from "../../geometricCorrectionSetter";
 
 export function KatexLayer({
   layoutData,
-  layoutDataSetter
+  fixLayout,
+  setFixedLayoutData
 }: {
   layoutData:LayoutData,
-  layoutDataSetter: React.Dispatch<React.SetStateAction<LayoutData | undefined>>
+  fixLayout : Boolean,
+  setFixedLayoutData : React.Dispatch<React.SetStateAction<LayoutData | null>>
 }) { 
-
   const katexLayerRef = useRef<HTMLDivElement>(null);
-  const labelRefs = useRef<Map<string, {node : HTMLElement, label : ColumnSeparatorLabel}>>(new Map());
+  const labelRefs = useRef<Map<string, {node : HTMLElement, label : ColumnSeparatorLabel}>>(new Map()) ;
 
   useEffect(() => {
     if (katexLayerRef.current) {
@@ -31,11 +32,14 @@ export function KatexLayer({
         console.log("Katex auto renderer not loaded");
       }
     }
-    layoutDataSetter(geometricCorrectionSetter(layoutData,labelRefs.current)) ;
+    if(fixLayout){
+      console.log("I'm fixing layout accuracy....")
+      setFixedLayoutData(geometricCorrectionSetter(layoutData, labelRefs.current)) ;
+    }
   }, [layoutData]);
 
   return (
-<div ref={katexLayerRef} className={styles.katexLayer}>
+<div ref={katexLayerRef} className={styles.katexLayer} style={{'--left-right-margin' : `${layoutData.config.labelsLeftRightMargin}px`} as CSSProperties}>
   <Labels
     labels={[
       ...layoutData.rowLabels,

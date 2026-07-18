@@ -45,8 +45,16 @@ export function processTkzTabVar(
   const rowBottom = rowBoundaries[row + 1];
 
 
-function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition) {
-    const x = getNodeX(columnSeparatorIndex, config)
+function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,hPosition:HorizontalPosition) {
+    const nodeX = getNodeX(columnSeparatorIndex, config)
+
+    const x =
+      hPosition === "left"
+        ? nodeX - config.labelsLeftRightMargin 
+        : 
+        hPosition === "right"
+        ? nodeX + config.labelsLeftRightMargin
+        : nodeX ;
     const y =
       vPosition === "top"
         ? rowTop + config.labelsTopBottomMargin 
@@ -67,7 +75,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition) 
         row,
         columnSeparatorIndex,
         value,
-        anchor: labelAnchor(columnSeparatorIndex, vPosition),
+        anchor: labelAnchor(columnSeparatorIndex, vPosition,hPosition),
         vPosition,
         hPosition,
       },
@@ -77,9 +85,14 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition) 
   let currSign: Sign | null = null;
   let lastSign: Sign | null = null;
   let isForbiddenRegion = false;
-
+  const columnSeparatorMaxIndex = varCmd.elements.length-1 ;
   varCmd.elements.forEach((curr, i) => {
     const columnSeparatorIndex = i; // TkzTabVar elements map 1:1 to separator nodes, no interleaving
+    const defaultHPosition :HorizontalPosition= columnSeparatorIndex === 0
+    ? "right"
+    :columnSeparatorIndex===columnSeparatorMaxIndex
+    ? "left"
+    :"center"
 
     if (
       !simpleModifiers.includes(curr.modifier) &&
@@ -138,7 +151,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition) 
     } else if (modifier === "+" || modifier === "-") {
       pushSeparator(
         SeparatorType.None,
-        makeLabel(columnSeparatorIndex, curr.left?.value, modifier === "+" ? "top" : "bottom", "center")
+        makeLabel(columnSeparatorIndex, curr.left?.value, modifier === "+" ? "top" : "bottom", defaultHPosition)
       );
     } else if (modifier === "+C" || modifier === "-C") {
       pushSeparator(
