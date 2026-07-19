@@ -1,5 +1,5 @@
 import styles from "../../VariationTable.module.css";
-import { CSSProperties, useEffect, useRef } from "react";
+import { CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
 import { ColumnSeparatorLabel, LayoutData } from "../../transformer/types";
@@ -18,7 +18,7 @@ export function KatexLayer({
   const katexLayerRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Map<string, {node : HTMLElement, label : ColumnSeparatorLabel}>>(new Map()) ;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (katexLayerRef.current) {
       try {
         renderMathInElement(katexLayerRef.current, {

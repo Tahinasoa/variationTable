@@ -162,24 +162,19 @@ export function getSegmentRectIntersection(seg:Segment, rect:{left:number,right:
 }
 
 
-export function shortenSegment(seg : Segment, shift:number ):Segment{
-  if(seg.end.y - seg.start.y !== 0){
-    const slope = (seg.end.x - seg.start.x)/(seg.end.y - seg.start.y) ;
-    const startX = seg.start.x + shift*slope;
-    const startY = seg.start.y + shift ;
+export function shortenSegment(seg : Segment, ratio:number ):Segment{
+  
+  let cx = (seg.end.x + seg.start.x)/2 ;
+  let cy = (seg.end.y + seg.start.y)/2 ;
 
-    const endX = seg.end.x - shift*slope
-    const endY = seg.end.y - shift ;
-    
     return {
       start : {
-        x: startX,
-        y: startY
+        x: cx + ratio*(seg.start.x - cx),
+        y: cy + ratio*(seg.start.y - cy) 
       },
       end : {
-        x: endX,
-        y: endY
+        x: cx + ratio*(seg.end.x - cx),
+        y: cy + ratio*(seg.end.y - cy)
       }
     }
-  }
 }

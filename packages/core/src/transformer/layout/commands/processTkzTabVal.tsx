@@ -18,6 +18,7 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
 
     const x = matchingArrow.originalPath.start.x * (1 - cmd.position) + matchingArrow.originalPath.end.x * cmd.position;
     const img_y = matchingArrow.originalPath.start.y * (1 - cmd.position) + matchingArrow.originalPath.end.y * cmd.position;
+    const row = matchingArrow.row ;
     const ant_y = getInterNodeY(0,1,rowBoundaries);
 
 
@@ -25,13 +26,13 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
     if (cmd.image.value) {
         image = {
             role: "intermediateImage",
-            row: 0,
+            row: row,
             columnSeparatorStart: localStart,
             columnSeparatorEnd: localEnd,
             position: cmd.position,
             value: cmd.image.value,
             anchor: { x, y: img_y },
-            vPosition: "top",
+            vPosition: "center",
             hPosition: "center"
         }
     }
@@ -40,7 +41,7 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
     if (cmd.antecedent) {
         antecedent = {
             role: "intermediateAntecedent",
-            row: 0,
+            row: row,
             columnSeparatorStart: localStart,
             columnSeparatorEnd: localEnd,
             position: cmd.position,

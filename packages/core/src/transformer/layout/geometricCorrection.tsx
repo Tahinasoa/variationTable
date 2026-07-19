@@ -83,8 +83,10 @@ function correctArrowPath(
   const startPoint: Point | null = startBounds ? getSegmentRectIntersection({start : startCenter, end:endCenter}, startBounds) : null ;
   const endPoint: Point | null = endBounds ? getSegmentRectIntersection({start : startCenter, end:endCenter}, endBounds) : null ;
   const path = { start: startPoint??startCenter, end: endPoint??endCenter };
-  return shortenSegment(path, 2);
+  return shortenSegment(path,0.80);
 }
+
+
 
 export function geometricCorrection(
   layoutData: LayoutData,
@@ -111,6 +113,42 @@ export function geometricCorrection(
     ...arrow,
     correctedPath: correctArrowPath(arrow, labels),
   }));
+
+  layout.columnSeparatorLabels.forEach((lbl)=>{
+    for(const value of labels.values()){
+      if(lbl.role === value.role
+        && lbl.row === value.row
+        && lbl.columnSeparatorIndex === value.columnSeparatorIndex
+        && lbl.hPosition === value.hPosition
+        && lbl.vPosition === value.vPosition
+        )
+        {
+          lbl.measuredHeight = value.measuredHeight ;
+          lbl.measuredWidth = value.measuredWidth ;
+        }
+    }
+  }) ;
+  layoutData.intermediateImages.forEach((img) => {
+    const arrow = layout.variationArrows.find(
+      (arr) =>
+        arr.row === img.row &&
+        arr.columnSeparatorStart === img.columnSeparatorStart &&
+        arr.columnSeparatorEnd === img.columnSeparatorEnd
+    );
+    console.log(layout) ;
+    if (arrow) {
+      const path  = arrow.correctedPath ?? arrow.originalPath ;
+      const dx = path.end.x - path.start.x ;
+      if(dx === 0) return ;
+
+      const x = img.anchor.x ;
+      const a = (path.end.y - path.start.y)/dx ;
+      const b = (path.start.y*path.end.x - path.start.x*path.end.y)/dx ;
+      const y = a*x + b;
+      img.anchor.x = x ;
+      img.anchor.y = y ;
+    }
+  });
 
   return layout;
 }
