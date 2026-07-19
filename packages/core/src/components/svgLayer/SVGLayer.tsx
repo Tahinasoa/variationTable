@@ -24,12 +24,12 @@ export function SVGLayer({
         strokeWidth={layoutData.config.strokeWidth}
         vectorEffect="non-scaling-stroke"
         shapeRendering="crispEdges">
-        <Grid layoutData={layoutData}/>
-        <ColumnSeparators layoutData={layoutData} />
         <ForbiddenRegions layoutData={layoutData} />
+        <ColumnSeparators layoutData={layoutData} />
         <VariationArrows
           layoutData={layoutData}
         />
+        <Grid layoutData={layoutData}/>
       </g>
     </svg>
   );
