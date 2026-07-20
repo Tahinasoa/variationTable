@@ -1,5 +1,5 @@
 import styles from './VariationTable.module.css';
-import { memo, useMemo, useRef, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { SVGLayer } from './components/svgLayer/SVGLayer';
 import { KatexLayer } from './components/katexLayer/KatexLayer';
 import { parseToLayoutData } from './transformer/transform';

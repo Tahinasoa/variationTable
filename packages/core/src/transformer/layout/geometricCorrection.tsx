@@ -8,7 +8,6 @@ import {
   VerticalPosition,
 } from "../types";
 import { getLabelBounds, getRectCenter, getSegmentRectIntersection, shortenSegment } from "./geometry";
-import { testGeometry } from "./geometry.test";
 
 function findColumnSeparatorLabel(
   labels: Map<string, Label>,
@@ -135,7 +134,6 @@ export function geometricCorrection(
         arr.columnSeparatorStart === img.columnSeparatorStart &&
         arr.columnSeparatorEnd === img.columnSeparatorEnd
     );
-    console.log(layout) ;
     if (arrow) {
       const path  = arrow.correctedPath ?? arrow.originalPath ;
       const dx = path.end.x - path.start.x ;

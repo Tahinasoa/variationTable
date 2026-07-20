@@ -1,6 +1,6 @@
-import { TkzTabRow } from "../parser/types";
-import { LayoutConfig } from "./layoutConfig";
-import { RowLabel } from "./types";
+import { TkzTabRow } from "../../../parser/types";
+import { LayoutConfig } from "../../layoutConfig";
+import { RowLabel } from "../../types";
 
 export function getRowLabels(rows:TkzTabRow[], config:LayoutConfig) : RowLabel[]{
 

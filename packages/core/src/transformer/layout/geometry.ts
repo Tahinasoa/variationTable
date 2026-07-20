@@ -85,7 +85,7 @@ export function getLabelBounds(label: Label): {
   right: number;
   top: number;
   bottom: number;
-} | null {
+} {
   const w = label.measuredWidth ?? 0;
   const h = label.measuredHeight ?? 0;
   const { x, y } = label.anchor;
@@ -122,13 +122,16 @@ export function getSegmentIntersection(seg1: Segment, seg2: Segment): Point | nu
   const x = k * (seg2.end.x - seg2.start.x) + seg2.start.x;
   const y = k * (seg2.end.y - seg2.start.y) + seg2.start.y;
   //make sure the intersetionPoint is on the both segment. 
-  if (
-    Math.abs(seg1.start.x + seg1.end.x -2* x) <= Math.abs(seg1.start.x-seg1.end.x) &&
-    Math.abs(seg2.start.x + seg2.end.x -2* x) <= Math.abs(seg2.start.x-seg2.end.x)
-  ) {
-    return { x, y };
-  }
-  return null ;
+  const inSeg1 =
+    Math.abs(seg1.start.x + seg1.end.x - 2 * x) <= Math.abs(seg1.start.x - seg1.end.x) &&
+    Math.abs(seg1.start.y + seg1.end.y - 2 * y) <= Math.abs(seg1.start.y - seg1.end.y);
+
+  const inSeg2 =
+    Math.abs(seg2.start.x + seg2.end.x - 2 * x) <= Math.abs(seg2.start.x - seg2.end.x) &&
+    Math.abs(seg2.start.y + seg2.end.y - 2 * y) <= Math.abs(seg2.start.y - seg2.end.y);
+
+  if (inSeg1 && inSeg2) return { x, y };
+  return null;
 }
 
 export function getSegmentRectIntersection(seg:Segment, rect:{left:number,right:number,top:number,bottom:number}):Point|null{

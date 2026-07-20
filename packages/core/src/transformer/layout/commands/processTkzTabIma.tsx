@@ -24,7 +24,7 @@ export function processTkzTabIma(cmd: TkzTabIma, variationArrows: LayoutVariatio
             row = arrow.row ;
         }
     })
-    if (!x || !y || !row) {
+    if (x===null || y===null || row===null) {
         throw new Error(`Could not process tkzTabIma, it doesn't match to any arrow`);
     }
 

@@ -4,7 +4,7 @@ import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
 import { ColumnSeparatorLabel, LayoutData } from "../../transformer/types";
 import { Labels } from "./Labels";
-import { geometricCorrectionSetter } from "../../geometricCorrectionSetter";
+import { measureAndCorrectLayout } from "../../measureAndCorrectLayout";
 
 export function KatexLayer({
   layoutData,
@@ -33,8 +33,7 @@ export function KatexLayer({
       }
     }
     if(fixLayout){
-      console.log("I'm fixing layout accuracy....")
-      setFixedLayoutData(geometricCorrectionSetter(layoutData, labelRefs.current)) ;
+      setFixedLayoutData(measureAndCorrectLayout(layoutData, labelRefs.current)) ;
     }
   }, [layoutData]);
 

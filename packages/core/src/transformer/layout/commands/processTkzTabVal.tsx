@@ -13,7 +13,7 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
     );
 
     if (!matchingArrow) {
-        throw new Error(`Could not process tkzTabIma, it doesn't match to any arrow`);
+        throw new Error(`Could not process tkzTabVal, it doesn't match to any arrow`);
     }
 
     const x = matchingArrow.originalPath.start.x * (1 - cmd.position) + matchingArrow.originalPath.end.x * cmd.position;

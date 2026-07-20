@@ -1,7 +1,7 @@
 import { geometricCorrection } from "./transformer/layout/geometricCorrection";
 import { LayoutData, ColumnSeparatorLabel, Label } from "./transformer/types";
 
-export function geometricCorrectionSetter(
+export function measureAndCorrectLayout(
   layoutData: LayoutData,
   labelRefs: Map<string, { node: HTMLElement; label: ColumnSeparatorLabel }>
 ): LayoutData {
