@@ -1,4 +1,1 @@
-import VariationTable from "./VariationTable";
-
-
-export {VariationTable} ;
+export { default as VariationTable } from "./VariationTable";
