@@ -103,7 +103,9 @@ VarElementList '"tkzTabVar" arguments'
     { return elems; }
 
 VarElement '"tkzTabVar" entry'
-  = "R" _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?{ return {modifier: "R" }; }
+  = &[,}]{return {kind : "empty"} ;}
+  /
+  "R" _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?{ return {modifier: "R" }; }
   / mod:VarModifier _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?
     { return { modifier: mod, left: makeLatex(left), right: makeLatex(right) }; }
 

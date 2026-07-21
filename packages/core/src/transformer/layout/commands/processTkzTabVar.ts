@@ -1,5 +1,6 @@
 import { TkzTabVar } from "../../../parser/types";
 import { LayoutConfig } from "../../layoutConfig";
+import { makeErrMsg } from "../../makeErrMsg";
 import {
   ColumnSeparatorLabel,
   LayoutColumnSeparator,
@@ -41,24 +42,24 @@ export function processTkzTabVar(
   const variationArrows: LayoutVariationArrow[] = [];
   const forbiddenRegions: LayoutForbiddenRegion[] = [];
 
-  const rowTop = rowBoundaries[row] ;
+  const rowTop = rowBoundaries[row];
   const rowBottom = rowBoundaries[row + 1];
 
 
-function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,hPosition:HorizontalPosition) {
+  function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition, hPosition: HorizontalPosition) {
     const nodeX = getNodeX(columnSeparatorIndex, config)
 
     const x =
       hPosition === "left"
-        ? nodeX - config.labelsLeftRightMargin 
-        : 
+        ? nodeX - config.labelsLeftRightMargin
+        :
         hPosition === "right"
-        ? nodeX + config.labelsLeftRightMargin
-        : nodeX ;
+          ? nodeX + config.labelsLeftRightMargin
+          : nodeX;
     const y =
       vPosition === "top"
-        ? rowTop + config.labelsTopBottomMargin 
-        : rowBottom - config.labelsTopBottomMargin ;
+        ? rowTop + config.labelsTopBottomMargin
+        : rowBottom - config.labelsTopBottomMargin;
     return { x, y };
   }
 
@@ -75,7 +76,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
         row,
         columnSeparatorIndex,
         value,
-        anchor: labelAnchor(columnSeparatorIndex, vPosition,hPosition),
+        anchor: labelAnchor(columnSeparatorIndex, vPosition, hPosition),
         vPosition,
         hPosition,
       },
@@ -87,16 +88,30 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
   let isForbiddenRegion = false;
   varCmd.elements.forEach((curr, i) => {
     const columnSeparatorIndex = i; // TkzTabVar elements map 1:1 to separator nodes, no interleaving
-
-    if (
+    if( ! ("modifier" in curr)){//throw error
+      throwUnsupportedModifierError({
+        modifier: '" Empty "',
+        row: row,
+        index: i,
+        line: varCmd.line,
+        column: varCmd.column
+      })
+      return ;
+    }
+    else if (
       !simpleModifiers.includes(curr.modifier) &&
       !doubleModifiers.includes(curr.modifier) &&
       curr.modifier !== "R"
     ) {
-      throw new Error(
-        `Unsupported modifier ${curr.modifier} for variation element at row ${row}, index ${i}`
-      );
+      throwUnsupportedModifierError({
+        modifier: curr.modifier,
+        row: row,
+        index: i,
+        line: varCmd.line,
+        column: varCmd.column
+      })
     }
+
 
     const modifier = curr.modifier;
 
@@ -104,8 +119,8 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
       currSign = modifier.includes("+")
         ? { columnSeparatorIndex, left: "+" }
         : modifier.includes("-")
-        ? { columnSeparatorIndex, left: "-" }
-        : null;
+          ? { columnSeparatorIndex, left: "-" }
+          : null;
     } else if (doubleModifiers.includes(modifier)) {
       currSign = {
         columnSeparatorIndex,
@@ -116,16 +131,23 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
 
     const signCount = modifier.split("").filter((c) => c === "+" || c === "-").length;
     if ((signCount === 0 || signCount > 2) && modifier !== "R") {
-      throw new Error(
-        `Unsupported modifier ${curr.modifier} for variation element at row ${row}, index ${i}`
-      );
+      throwUnsupportedModifierError({
+        modifier: curr.modifier,
+        row: row,
+        index: i,
+        line: varCmd.line,
+        column: varCmd.column
+
+      })
     }
 
     const pushSeparator = (type: SeparatorType, labels: ColumnSeparatorLabel[]) => {
-      columnSeparators.push({ type, columnSeparatorIndex, row, position: {
-        start: { x: getNodeX(columnSeparatorIndex, config), y: rowTop },
-        end: { x: getNodeX(columnSeparatorIndex, config), y: rowBottom },
-      }});
+      columnSeparators.push({
+        type, columnSeparatorIndex, row, position: {
+          start: { x: getNodeX(columnSeparatorIndex, config), y: rowTop },
+          end: { x: getNodeX(columnSeparatorIndex, config), y: rowBottom },
+        }
+      });
       columnSeparatorLabels.push(...labels);
     };
 
@@ -196,17 +218,22 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
       ];
       pushSeparator(separatorType, labels);
     } else {
-      throw new Error(
-        `Unsupported modifier ${curr.modifier} for variation element at row ${row}, index ${i}`
-      );
+      throwUnsupportedModifierError({
+        modifier: curr.modifier,
+        row: row,
+        index: i,
+        line: varCmd.line,
+        column: varCmd.column
+
+      })
     }
 
     // --- variation arrows ---
     if (!isForbiddenRegion && currSign !== null && lastSign !== null) {
       const startX = getNodeX(lastSign.columnSeparatorIndex, config);
       const endX = getNodeX(currSign.columnSeparatorIndex, config);
-      const yTop = rowTop+config.labelsTopBottomMargin ;
-      const yBottom = rowBottom - config.labelsTopBottomMargin ;
+      const yTop = rowTop + config.labelsTopBottomMargin;
+      const yBottom = rowBottom - config.labelsTopBottomMargin;
 
       if (currSign.left === "+" && lastSign.right === "-") {
         variationArrows.push({
@@ -215,7 +242,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
           columnSeparatorStart: lastSign.columnSeparatorIndex,
           columnSeparatorEnd: currSign.columnSeparatorIndex,
           row,
-          originalPath : { start: { x: startX, y: yBottom }, end: { x: endX, y: yTop } },
+          originalPath: { start: { x: startX, y: yBottom }, end: { x: endX, y: yTop } },
         });
       } else if (currSign.left === "-" && lastSign.right === "+") {
         variationArrows.push({
@@ -260,3 +287,21 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
 
   return { columnSeparators, columnSeparatorLabels, variationArrows, forbiddenRegions };
 }
+
+
+function throwUnsupportedModifierError({ modifier, row, index, line, column }: {
+  modifier: string;
+  row: number;
+  index: number;
+  line: number;
+  column: number
+}) {
+  const msg = `Unsupported modifier ${modifier} for variation element at row ${row}, index ${index+1}`; //We add 1 because tkzTab uses 1-based index and internally we use 0 based index
+  throw new Error(
+    makeErrMsg({
+      line: line,
+      column: column,
+      msg: msg
+    })
+  );
+};
