@@ -58,7 +58,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
 
     ast.body.forEach((cmd) => {
         if (cmd.type === 'tkzTabLine') {
-            checkRowCount(currentRowIndex, maxRowIndex);
+            checkRowCount(currentRowIndex, maxRowIndex, cmd.line, cmd.column);
             const result = processTkzTabLine(cmd, currentRowIndex, rowBoundaries, config);
             lineContents.push(...result.lineContents);
             columnSeparators.push(...result.columnSeparators);
@@ -112,10 +112,14 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     };
 }
 
-function checkRowCount(currentRowIndex: number, maxRowIndex: number) {
+function checkRowCount(currentRowIndex: number, maxRowIndex: number,line:number,column:number) {
     if (currentRowIndex > maxRowIndex) {
         throw new Error(
-            `Row ${currentRowIndex} exceeds the number of declared body rows (${maxRowIndex})`
+            makeErrMsg({
+                line : line,
+                column : column,
+                msg :  `Row ${currentRowIndex} exceeds the number of declared body rows (${maxRowIndex})`
+            })
         );
     }
 }
