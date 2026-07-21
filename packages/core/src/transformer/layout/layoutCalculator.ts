@@ -18,7 +18,6 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     }
 
     const init: TkzTabInit = ast.body[0];
-    console.log(init) ;
     if (init.rows.length === 0) {
         throw new Error(makeErrMsg({ line: init.line, column: init.column, msg: "tkzTabInit must define at least one row" }));
     }
@@ -59,7 +58,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
 
     ast.body.forEach((cmd) => {
         if (cmd.type === 'tkzTabLine') {
-            checkRowCount(currentRowIndex, maxRowIndex);
+            checkRowCount(currentRowIndex, maxRowIndex, cmd.line, cmd.column);
             const result = processTkzTabLine(cmd, currentRowIndex, rowBoundaries, config);
             lineContents.push(...result.lineContents);
             columnSeparators.push(...result.columnSeparators);
@@ -69,7 +68,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
             currentRowIndex++;
         }
         else if (cmd.type === 'tkzTabVar') {
-            checkRowCount(currentRowIndex, maxRowIndex);
+            checkRowCount(currentRowIndex, maxRowIndex,cmd.line,cmd.column);
             const result = processTkzTabVar(cmd, currentRowIndex, rowBoundaries, config);
             columnSeparators.push(...result.columnSeparators);
             columnSeparatorLabels.push(...result.columnSeparatorLabels);
@@ -113,10 +112,14 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     };
 }
 
-function checkRowCount(currentRowIndex: number, maxRowIndex: number) {
+function checkRowCount(currentRowIndex: number, maxRowIndex: number,line:number,column:number) {
     if (currentRowIndex > maxRowIndex) {
         throw new Error(
-            `Row ${currentRowIndex} exceeds the number of declared body rows (${maxRowIndex})`
+            makeErrMsg({
+                line : line,
+                column : column,
+                msg :  `Row ${currentRowIndex} exceeds the number of declared body rows (${maxRowIndex})`
+            })
         );
     }
 }

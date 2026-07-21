@@ -44,6 +44,7 @@ The engine follows a three-stage pipeline:
 ### Basic Usage
 
 ```tsx
+import 'katex/dist/katex.min.css'; 
 import {VariationTable} from '@variation/core'
 
 const MyComponent = () => {
@@ -59,11 +60,17 @@ Theme can be `light` or `dark` and is optional.
 
 ---
 
-## 📈 Roadmap
+## 🔌 Compatibility & Divergences
 
-* [ ] Implement unit testing suite (Vitest).
-* [ ] Improve error handling and user feedback.
-* [ ] Add full support for `tkzTabIma`, `tkzTabVal`, and `TkzTabSlope` commands.
-* [ ] Implement support for optional arguments.
+* **Coverage:** It supports the vast majority of standard use cases handled by the original `tkz-tab` package.
+* **Error Handling:** Unlike `tkz-tab`, which can fail silently or render broken outputs, it explicitly throws descriptive error messages pinpointing the source of failure.
+* **Line Breaks:** It does not support raw `\\` line breaks outside of math mode (`$...$`).
+* **Math Rendering:** It uses KaTeX to render mathematical expressions; please refer to the [KaTeX Supported Features](https://katex.org/docs/supported.html) for valid commands.
+
+
+## 📈 To Do
+
+* [ ] Implement support for optional arguments to controle table dimensions.
+* [ ] Fully support `tkzTabSlope` and `tkzTab` short hand initialisation command.
 
 ---

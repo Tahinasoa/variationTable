@@ -11,7 +11,7 @@ export interface LatexExpression {
 // Éléments de \tkzTabLine
 // ---------------------------------------------------------------------------
 
-export interface LineElementEmpty {
+export interface EmptyElement {
   kind: "empty";
 }
 
@@ -26,7 +26,7 @@ export interface LineElementContent {
 }
 
 export type LineElement =
-  | LineElementEmpty
+  | EmptyElement
   | LineElementKeyword
   | LineElementContent;
 
@@ -45,7 +45,7 @@ export type VarElement = {
   modifier: VarModifier;
   left: LatexExpression | null;
   right: LatexExpression | null
-}
+} | EmptyElement ;
 
 // ---------------------------------------------------------------------------
 // Types partagés

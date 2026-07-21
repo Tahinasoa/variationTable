@@ -11,14 +11,16 @@ export function getRowLabels(rows:TkzTabRow[], config:LayoutConfig) : RowLabel[]
         const y = (currentRowTop + rowBottom)/2 ;
         currentRowTop = rowBottom ;
 
-        const x = config.labelColumnWidth/2 ;
+        const width = config.labelColumnWidth;
+        const x = width/2 ;
         return {
             role : 'rowLabel',
             row : i,
             value : tkzTabRow.label.value,
             anchor : {x,y},
             vPosition : 'center',
-            hPosition  : 'center'
+            hPosition  : 'center',
+            maxWidth : width
         }
     }) ;
 }

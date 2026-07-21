@@ -65,6 +65,7 @@ export interface BaseLabel {
   anchor : Point;
   vPosition : VerticalPosition;
   hPosition : HorizontalPosition;
+  maxWidth? : number ;
   //filled in by the geometric correction pass, after DOM measurement
   measuredWidth?: number;
   measuredHeight?: number;

@@ -1,4 +1,5 @@
 import { TkzTabVal } from "../../../parser/types";
+import { makeErrMsg } from "../../makeErrMsg";
 import { IntermediateAntecedentLabel, IntermediateImageLabel, LayoutVariationArrow } from "../../types";
 import { getInterNodeY } from "../geometry";
 
@@ -15,7 +16,12 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
     );
 
     if (!matchingArrow) {
-        throw new Error(`Could not process tkzTabVal, it doesn't match to any arrow`);
+        throw new Error( makeErrMsg({
+            line : cmd.line,
+            column : cmd.column,
+            msg : `Could not process tkzTabVal, it doesn't match to any arrow`
+        })) ;
+        
     }
 
     const x = matchingArrow.originalPath.start.x * (1 - cmd.position) + matchingArrow.originalPath.end.x * cmd.position;

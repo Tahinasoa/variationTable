@@ -1,8 +1,17 @@
 import { TkzTabIma } from "../../../parser/types";
+import { makeErrMsg } from "../../makeErrMsg";
 import { IntermediateImageLabel, LayoutVariationArrow } from "../../types";
 
 export function processTkzTabIma(cmd: TkzTabIma, variationArrows: LayoutVariationArrow[]): IntermediateImageLabel | null {
-    if (!cmd.image) return null;
+    if (!cmd.image) {
+        throw new Error(makeErrMsg(
+            {
+                msg: `Could not process tkzTabIma : missing " image " argument`,
+                line: cmd.line,
+                column: cmd.column
+            }));
+        return null;
+    }
     let x: number | null = null;
     let y: number | null = null;
     let row:number | null = null ;
@@ -25,7 +34,12 @@ export function processTkzTabIma(cmd: TkzTabIma, variationArrows: LayoutVariatio
         }
     })
     if (x===null || y===null || row===null) {
-        throw new Error(`Could not process tkzTabIma, it doesn't match to any arrow`);
+        throw new Error(makeErrMsg(
+        {
+            msg : `Could not process tkzTabIma, it doesn't match to any arrow`,
+            line : cmd.line,
+            column : cmd.column
+        }));
     }
 
     return {

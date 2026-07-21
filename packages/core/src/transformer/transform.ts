@@ -17,7 +17,6 @@ export function parseToLayoutData(input: string): ParseToLayoutDataOutPut{
   try {
     ast = parse(input) ;
   } catch (e: any) {
-    console.log({...e}) ;
     const message = makeErrMsg({
       line : e.location.start.line,
       column : e.location.start.column,

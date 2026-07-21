@@ -8,6 +8,13 @@ This file is append-only: once an entry is added, it is not edited or removed. C
 
 ## [Unreleased]
 
+#Fixed
+
+* `2026-07-21` **#14** (Architecture,High) Re-implement the architecture to make a clean separation between layout calculation and rendering
+* `2026-07-21` **#12** (Parser,Medium) Improve error message readability and context for invalid LaTeX syntax
+* `2026-07-21` **#13** (Parser,High) Implement full support for `\tkzTabVal` and `\tkzTabIma` commands
+
+
 ### Fixed
 - `2026-07-14` **#14** (Renderer,Low) Implement light/dark theming|
 - `2026-07-14` **#11** (Renderer,In Progress) embed the component into a div to protect it from parent styling effect|
@@ -15,8 +22,6 @@ This file is append-only: once an entry is added, it is not edited or removed. C
 - `2026-07-13` — **#06** *(Packaging, Medium)* — CSS Modules scoping caused the `.katex` override to silently no-op due to class-name hashing. Fixed via `:global(.katex)`.
 
 ---
-
-## [0.1.0] — pre-publish
 
 ### Fixed
 - **#05** *(Parser/Renderer, Medium)* — Added support for `R`, `R/`, and `R / ` syntax.
