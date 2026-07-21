@@ -22,6 +22,7 @@ export function Labels({ labels, labelrefs }: { labels: Label[], labelrefs: Map<
 
 
         const key = `${label.role}-${i}`;
+        const maxWidth = label.maxWidth ? `${label.maxWidth}px`: 'none'
         return (
           <span
             key={key}
@@ -39,6 +40,9 @@ export function Labels({ labels, labelrefs }: { labels: Label[], labelrefs: Map<
             style={{
               left: `${label.anchor.x}px`,
               top: `${label.anchor.y}px`,
+              maxWidth : maxWidth,
+              boxSizing : "border-box",
+              padding : '1px',
             }}
             className={className}
           >
