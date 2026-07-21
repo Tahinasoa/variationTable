@@ -1,6 +1,6 @@
 {
   "name": "@variation/core",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "files": [
@@ -9,15 +9,13 @@
   "scripts": {
     "build-parser": "peggy --format es --output src/parser/parser.mjs src/parser/parserGammar.peggy"
   },
-  "dependencies": {
-    "katex": "^0.16.33"
-  },
   "peerDependencies": {
     "katex": "^0.16.33",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
+    "peggy": "^5.0.6",
     "@types/react": "18.3.x",
     "@types/react-dom": "18.3.x"
   }
