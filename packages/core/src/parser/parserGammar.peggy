@@ -103,7 +103,7 @@ VarElementList '"tkzTabVar" arguments'
     { return elems; }
 
 VarElement '"tkzTabVar" entry'
-  = "R" (_"/")|0..2|{ return {modifier: "R" }; }
+  = "R" _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?{ return {modifier: "R" }; }
   / mod:VarModifier _ left:("/" _ @VarValue)? _ right:("/" _ @VarValue)?
     { return { modifier: mod, left: makeLatex(left), right: makeLatex(right) }; }
 
@@ -157,7 +157,7 @@ Integer "Integer"
     { return parseInt(digits.join(""), 10); }
 
 Decimal "Decimal number"
-  = val:$([0-9]+ ("." [0-9]+)?)
+  = val:$([0-9]+ ("." [0-9]+)?  / "." [0-9]+ )
     { return parseFloat(val); }
 
 _  'Whitespace'= [ \t\n\r]*
