@@ -7,15 +7,15 @@
     "src"
   ],
   "scripts": {
-    "build-parser": "peggy --format es --output src/parser.mjs src/parserGammar.peggy"
+    "build-parser": "peggy --format es --output src/parser/parser.mjs src/parser/parserGammar.peggy"
   },
   "dependencies": {
     "katex": "^0.16.33"
   },
   "peerDependencies": {
+    "katex": "^0.16.33",
     "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "katex": "^0.16.33"
+    "react-dom": ">=18.0.0"
   },
   "devDependencies": {
     "@types/react": "18.3.x",

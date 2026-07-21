@@ -1,41 +1,35 @@
-import type { TableData } from '../../models/TableData';
-import { RowSeparators } from './RowSeparators';
+import { LayoutData } from '../../transformer/types';
 import styles from '../../VariationTable.module.css';
 
 import { ArrowHeadDef, HashPattern } from './ArrowHeadDef';
-import { ColumnSeparator } from './ColumnSeparators';
-import { TableOutline } from './TableOutline.tsx';
-import { VariationArrows } from './VariationArrows.tsx';
-import type { MeasuredData } from '../../VariationTable.tsx';
-import { ForbiddenRegions } from './ForbiddenRegions.tsx';
+import { ColumnSeparators } from './ColumnSeparators';
+import { ForbiddenRegions } from './ForbiddenRegions';
+import { Grid } from './Grid';
+import { VariationArrows } from './VariationArrows';
 
 export function SVGLayer({
-  tableData,
-  measuredData,
+  layoutData,
 }: {
-  tableData: TableData;
-  measuredData: MeasuredData;
+  layoutData: LayoutData;
 }) {
   return (
     <svg
       className={styles.svgLayer}
-      viewBox={`0 0 ${tableData.width} ${tableData.height}`}
+      viewBox={`0 0 ${layoutData.width} ${layoutData.height}`}
       preserveAspectRatio="xMidYMid meet"
     >
       {ArrowHeadDef}
       {HashPattern}
-      <g 
-        strokeWidth={0.5}
+      <g
+        strokeWidth={layoutData.config.strokeWidth}
         vectorEffect="non-scaling-stroke"
         shapeRendering="crispEdges">
-        <ForbiddenRegions tableData={tableData} />
-        <ColumnSeparator tableData={tableData} />
-        <RowSeparators tableData={tableData} />
-        <TableOutline tableData={tableData} />
+        <ForbiddenRegions layoutData={layoutData} />
+        <ColumnSeparators layoutData={layoutData} />
         <VariationArrows
-          labelGeometry={measuredData.labelGeometry}
-          tableData={tableData}
+          layoutData={layoutData}
         />
+        <Grid layoutData={layoutData}/>
       </g>
     </svg>
   );

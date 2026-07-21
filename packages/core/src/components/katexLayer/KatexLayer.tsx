@@ -1,26 +1,24 @@
-import type { TableData } from "../../models/TableData";
 import styles from "../../VariationTable.module.css";
-import { RowLabels } from "./RowLabels";
-import { Headers } from "./Headers";
-import { Variable } from "./Variable";
-import { useEffect, useRef } from "react";
-import { Signs } from "./Signs";
-import { SeparatorLabelRef, SeparatorLabels } from "./SeparatorLabels";
+import { CSSProperties, useLayoutEffect, useRef } from "react";
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css'; //TODO decide on to keep this or not.
-import { MeasurementAction } from "../../VariationTable";
+import { ColumnSeparatorLabel, LayoutData } from "../../transformer/types";
+import { Labels } from "./Labels";
+import { measureAndCorrectLayout } from "../../measureAndCorrectLayout";
 
 export function KatexLayer({
-  tableData,
-  setDataMeasurement,
+  layoutData,
+  fixLayout,
+  setFixedLayoutData
 }: {
-  tableData: TableData;
-  setDataMeasurement: React.Dispatch<MeasurementAction>;
-}) {
+  layoutData:LayoutData,
+  fixLayout : Boolean,
+  setFixedLayoutData : React.Dispatch<React.SetStateAction<LayoutData | null>>
+}) { 
   const katexLayerRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<Map<string, SeparatorLabelRef>>(new Map());
+  const labelRefs = useRef<Map<string, {node : HTMLElement, label : ColumnSeparatorLabel}>>(new Map()) ;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (katexLayerRef.current) {
       try {
         renderMathInElement(katexLayerRef.current, {
@@ -34,18 +32,27 @@ export function KatexLayer({
         console.log("Katex auto renderer not loaded");
       }
     }
-
-    setDataMeasurement({ type: "Labels", payload: labelRef.current });
-
-  }, [tableData]);
+    if(fixLayout){
+      setFixedLayoutData(measureAndCorrectLayout(layoutData, labelRefs.current)) ;
+    }
+  }, [layoutData]);
 
   return (
-    <div ref={katexLayerRef} className={styles.katexLayer}>
-      <Variable tableData={tableData} />
-      <RowLabels tableData={tableData} />
-      <Headers tableData={tableData} />
-      <Signs tableData={tableData} />
-      <SeparatorLabels tableData={tableData} labelrefs={labelRef.current} />
-    </div>
+<div ref={katexLayerRef} className={styles.katexLayer} style={{'--left-right-margin' : `${layoutData.config.labelsLeftRightMargin}px`} as CSSProperties}>
+  <Labels
+    labels={[
+      ...layoutData.rowLabels,
+      ...layoutData.columnHeaders,
+      ...layoutData.columnSeparatorLabels,
+      ...layoutData.lineContents,
+      ...layoutData.intermediateAntecedents,
+      ...layoutData.intermediateImages,
+    ]}
+    labelrefs={labelRefs.current}
+  />
+</div>
+
   );
 }
+
+

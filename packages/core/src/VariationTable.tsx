@@ -1,64 +1,38 @@
 import styles from './VariationTable.module.css';
+import { memo, useMemo, useState } from 'react';
 import { SVGLayer } from './components/svgLayer/SVGLayer';
 import { KatexLayer } from './components/katexLayer/KatexLayer';
-
-import {
-  TableData,
-  type HorizontalPosition,
-  type VerticalPosition,
-} from './models/TableData';
-import { memo, useMemo, useReducer } from 'react';
-import {
-  parseToTableData
-} from './transform.ts';
-import { SeparatorLabelRef } from './components/katexLayer/SeparatorLabels.tsx';
-
-export interface LabelGeometry {
-  // Data attributes
-  row: number;
-  column: number;
-  vpos: VerticalPosition;
-  hpos: HorizontalPosition;
-
-  // Measurements
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
-export type MeasuredData = {
-  labelGeometry?: LabelGeometry[];
-}
-
-export type MeasurementAction = MeasurementAction_labels;
-export interface MeasurementAction_labels {
-  type: 'Labels';
-  payload: Map<string, SeparatorLabelRef>;
-}
+import { parseToLayoutData } from './transformer/transform';
+import { LayoutData } from './transformer/types';
 
 
 const VariationTable = memo(__VariationTable);
 
 function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'light' | 'dark' }) {
-  const { data, error } =
-    useMemo(() => {
-      return parseToTableData(inputText);
-    }, [inputText]);
+  
+  const [fixedLayoutData,setFixedLayoutData] = useState<LayoutData|null>(null) ;
+  const {layoutData, error} = useMemo(()=>{
+    return parseToLayoutData(inputText) ;
+  }, [inputText]) ;
+  const styleTheme = (theme === 'dark' ? styles.dark : styles.light );
 
-  const tableData = useMemo(() => {
-    if (!data) return null;
-    else return new TableData(data);
-  }, [data]);
+  if (!layoutData) {
+    if(error){
+      return <div className={styles.errorMsg+' '+ styleTheme} dangerouslySetInnerHTML={{__html : error}}></div>
+    }
+    return <h1>Something went wrong</h1>;
+  }
 
-  const [measuredData, setDataMeasurement] = useReducer(measurementReducer, {});
 
-
-  if (!tableData) {
-    return <div>{error}</div>;
+  let data:LayoutData ;
+  let mustFixLayout:Boolean ;
+  if(!fixedLayoutData || (fixedLayoutData.id !== layoutData.id)){
+    data = layoutData ; // always use the most recent Data
+    mustFixLayout = true ; //Prepare geometric correction
+  }
+  else {
+    data = fixedLayoutData ;
+    mustFixLayout = false ; //we don't have to fix layout anymore
   }
 
   return (
@@ -67,65 +41,25 @@ function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'li
         display: 'flow-root',
         isolation: 'isolate', // Prevents parent z-index/blending interference
         contain: 'layout style paint', // Stops layout shifts, style inheritance, and painting leaks
+        overflow : 'scroll'
       }}
-      className={theme === 'dark' ? styles.dark : styles.light}
+      className={styleTheme}
     >
       <div
-        className={styles.canvas}
+        className={styles.canvas + ' '}
         style={{
-          width: `${tableData.width}px`,
-          height: `${tableData.height}px`,
+          width: `${layoutData.width}px`,
+          height: `${layoutData.height}px`,
           margin: 0,
           padding: 0,
           border: 'none',
           boxSizing: 'border-box',
         }}
       >
-        <SVGLayer tableData={tableData} measuredData={measuredData} />
-        <KatexLayer tableData={tableData} setDataMeasurement={setDataMeasurement} />
+        <SVGLayer layoutData={data} />
+        <KatexLayer layoutData={data} fixLayout={mustFixLayout} setFixedLayoutData={setFixedLayoutData}/>
       </div>
     </div>
   );
 }
 export default VariationTable;
-
-
-function measurementReducer(
-  currentMesurement: MeasuredData,
-  action: MeasurementAction): MeasuredData {
-  switch (action.type) {
-    case 'Labels':
-      return { labelGeometry: getLabelsMeasurements(action.payload) };
-  }
-  return currentMesurement;
-}
-
-
-function getLabelsMeasurements(labelRef: Map<string, SeparatorLabelRef>): LabelGeometry[] {
-  const labelGeometry: LabelGeometry[] = [];
-
-  labelRef.forEach((value) => {
-    if (value.type == 'separatorLabel') {
-      const rect = value.node.getBoundingClientRect();
-      labelGeometry.push({
-        // Data attributes
-        row: value.row,
-        column: value.column,
-        vpos: value.vpos,
-        hpos: value.hpos,
-
-        // Measurements
-        x: rect.x,
-        y: rect.y,
-        width: rect.width,
-        height: rect.height,
-        top: rect.top,
-        left: rect.left,
-        right: rect.right,
-        bottom: rect.bottom,
-      });
-    }
-  }
-  );
-  return labelGeometry;
-}
