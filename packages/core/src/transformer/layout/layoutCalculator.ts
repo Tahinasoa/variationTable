@@ -30,7 +30,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     init.rows.forEach((row, i) => {
         if (row.height <= 0) {
             const msg = `Row ${i} has an invalid height (${row.height}); it must be > 0`;
-            throw new Error(makeErrMsg({ line: row.line ?? init.line, column: row.column ?? init.column, msg: msg }));
+            throw new Error(makeErrMsg({ line: init.line ?? init.line, column: init.column ?? init.column, msg: msg }));
         }
     });
 
