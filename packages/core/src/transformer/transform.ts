@@ -2,8 +2,8 @@ import { TkzTabDocument } from '../parser/types';
 import { calculateLayout } from './layout/layoutCalculator';
 import { LayoutData } from './types';
 import { defaultLayoutConfig } from './layoutConfig';
-import { parse } from '../parser/parser.mjs';
 import { makeErrMsg } from './makeErrMsg';
+import { parse } from '../parser/parser.mjs';
 
 
 
@@ -15,7 +15,7 @@ export interface ParseToLayoutDataOutPut
 export function parseToLayoutData(input: string): ParseToLayoutDataOutPut{
   let ast: TkzTabDocument;
   try {
-    ast = parse(input) as TkzTabDocument;
+    ast = parse(input) ;
   } catch (e: any) {
     console.log({...e}) ;
     const message = makeErrMsg({
