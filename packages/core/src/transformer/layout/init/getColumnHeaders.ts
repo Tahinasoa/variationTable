@@ -9,8 +9,6 @@ export function getColumnHeaders(headers: LatexExpression[], config: LayoutConfi
     return headers.map((header, i) => {
         const x = getNodeX(i,config)
         let hPosition: HorizontalPosition = 'center';
-        if (i === 0) hPosition = 'right';
-        else if (i === headers.length - 1) hPosition = 'left';
 
         return {
             role : 'columnHeader',

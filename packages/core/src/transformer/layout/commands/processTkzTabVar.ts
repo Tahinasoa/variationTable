@@ -85,14 +85,8 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
   let currSign: Sign | null = null;
   let lastSign: Sign | null = null;
   let isForbiddenRegion = false;
-  const columnSeparatorMaxIndex = varCmd.elements.length-1 ;
   varCmd.elements.forEach((curr, i) => {
     const columnSeparatorIndex = i; // TkzTabVar elements map 1:1 to separator nodes, no interleaving
-    const defaultHPosition :HorizontalPosition= columnSeparatorIndex === 0
-    ? "right"
-    :columnSeparatorIndex===columnSeparatorMaxIndex
-    ? "left"
-    :"center"
 
     if (
       !simpleModifiers.includes(curr.modifier) &&
@@ -151,7 +145,7 @@ function labelAnchor(columnSeparatorIndex: number, vPosition: VerticalPosition,h
     } else if (modifier === "+" || modifier === "-") {
       pushSeparator(
         SeparatorType.None,
-        makeLabel(columnSeparatorIndex, curr.left?.value, modifier === "+" ? "top" : "bottom", defaultHPosition)
+        makeLabel(columnSeparatorIndex, curr.left?.value, modifier === "+" ? "top" : "bottom", "center")
       );
     } else if (modifier === "+C" || modifier === "-C") {
       pushSeparator(
