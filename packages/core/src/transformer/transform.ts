@@ -3,6 +3,8 @@ import { calculateLayout } from './layout/layoutCalculator';
 import { LayoutData } from './types';
 import { defaultLayoutConfig } from './layoutConfig';
 import { parse } from '../parser/parser.mjs';
+import { makeErrMsg } from './makeErrMsg';
+
 
 
 // ---------------------------------------------------------------------------
@@ -15,7 +17,13 @@ export function parseToLayoutData(input: string): ParseToLayoutDataOutPut{
   try {
     ast = parse(input) as TkzTabDocument;
   } catch (e: any) {
-    return { error: e.message ?? 'Unknown parse error' };
+    console.log({...e}) ;
+    const message = makeErrMsg({
+      line : e.location.start.line,
+      column : e.location.start.column,
+      msg : e.message
+    })
+    return { error: message ?? 'Unknown parse error' };
   }
   try {
     return { layoutData: calculateLayout(ast,defaultLayoutConfig) };

@@ -14,10 +14,11 @@ function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'li
   const {layoutData, error} = useMemo(()=>{
     return parseToLayoutData(inputText) ;
   }, [inputText]) ;
+  const styleTheme = (theme === 'dark' ? styles.dark : styles.light );
 
   if (!layoutData) {
     if(error){
-      return <div>{error}</div>
+      return <div className={styles.errorMsg+' '+ styleTheme} dangerouslySetInnerHTML={{__html : error}}></div>
     }
     return <h1>Something went wrong</h1>;
   }
@@ -42,7 +43,7 @@ function __VariationTable({ inputText, theme }: { inputText: string; theme?: 'li
         contain: 'layout style paint', // Stops layout shifts, style inheritance, and painting leaks
         overflow : 'scroll'
       }}
-      className={theme === 'dark' ? styles.dark : styles.light}
+      className={styleTheme}
     >
       <div
         className={styles.canvas + ' '}

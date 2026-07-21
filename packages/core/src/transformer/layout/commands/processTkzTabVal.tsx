@@ -3,7 +3,9 @@ import { IntermediateAntecedentLabel, IntermediateImageLabel, LayoutVariationArr
 import { getInterNodeY } from "../geometry";
 
 export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariationArrow[], rowBoundaries: number[]): { image: IntermediateImageLabel | null, antecedent: IntermediateAntecedentLabel | null } {
-    if (!cmd.image) return {image:null, antecedent:null};
+    let image: IntermediateImageLabel | null = null;
+    let antecedent: IntermediateAntecedentLabel | null = null;
+    
     //TkzTab uses 1-based index, and our system uses 0 based index so we should fix that
     const localStart = cmd.startRank - 1;
     const localEnd = cmd.endRank - 1;
@@ -22,8 +24,8 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
     const ant_y = getInterNodeY(0,1,rowBoundaries);
 
 
-    let image: IntermediateImageLabel | null = null;
-    if (cmd.image.value) {
+
+    if (cmd.image && cmd.image.value) {
         image = {
             role: "intermediateImage",
             row: row,
@@ -37,17 +39,16 @@ export function processTkzTabVal(cmd: TkzTabVal, variationArrows: LayoutVariatio
         }
     }
 
-    let antecedent: IntermediateAntecedentLabel | null = null;
-    if (cmd.antecedent) {
+    if (cmd.antecedent && cmd.antecedent.value) {
         antecedent = {
             role: "intermediateAntecedent",
             row: row,
             columnSeparatorStart: localStart,
             columnSeparatorEnd: localEnd,
             position: cmd.position,
-            value: cmd.antecedent?.value,
+            value: cmd.antecedent.value,
             anchor: { x, y: ant_y },
-            vPosition: "top",
+            vPosition: "center",
             hPosition: "center"
         }
     }

@@ -95,7 +95,7 @@ export function processTkzTabLine(
             role: "columnSeparatorLabel",
             row,
             columnSeparatorIndex: columnSeparatorIndex,
-            value: el.value.value,
+            value: `$${el.value.value}$`,
             anchor,
             vPosition: "center",
             hPosition: "center",

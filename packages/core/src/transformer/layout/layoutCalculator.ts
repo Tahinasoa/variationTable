@@ -1,5 +1,6 @@
 import { TkzTabDocument, TkzTabInit } from "../../parser/types";
 import { LayoutConfig } from "../layoutConfig";
+import { makeErrMsg } from "../makeErrMsg";
 import { LayoutData, Segment, LineContentLabel, IntermediateImageLabel, IntermediateAntecedentLabel, LayoutColumnSeparator, LayoutVariationArrow, LayoutForbiddenRegion, ColumnSeparatorLabel } from "../types";
 import { processTkzTabIma } from "./commands/processTkzTabIma";
 import { processTkzTabLine } from "./commands/processTkzTabLine";
@@ -11,25 +12,28 @@ import { getGrid } from "./init/getGrid";
 import { getRowLabels } from "./init/getRowLabels";
 
 export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: LayoutConfig): LayoutData {
-    if (ast.body[0].type !== "tkzTabInit") {
-        throw new Error("tkzTabInit not found");
+
+    if (ast.body.length === 0 || ast.body[0].type !== "tkzTabInit") {
+        throw new Error(makeErrMsg({ line: 1, column: 1, msg: "tkzTabInit not found" }));
     }
 
     const init: TkzTabInit = ast.body[0];
-
+    console.log(init) ;
     if (init.rows.length === 0) {
-        throw new Error("tkzTabInit must define at least one row");
+        throw new Error(makeErrMsg({ line: init.line, column: init.column, msg: "tkzTabInit must define at least one row" }));
     }
 
     if (init.antecedents.length === 0) {
-        throw new Error("tkzTabInit must define at least one antecedent (column)");
+        throw new Error(makeErrMsg({ line: init.line, column: init.column, msg: "tkzTabInit must define at least one antecedent (column)" }));
     }
 
     init.rows.forEach((row, i) => {
         if (row.height <= 0) {
-            throw new Error(`Row ${i} has an invalid height (${row.height}); it must be > 0`);
+            const msg = `Row ${i} has an invalid height (${row.height}); it must be > 0`;
+            throw new Error(makeErrMsg({ line: row.line ?? init.line, column: row.column ?? init.column, msg: msg }));
         }
     });
+
     
     const config:LayoutConfig = {...defaultLayoutConfig} ;
     const rowBoundaries = getRowBoundaries(init.rows, config);
