@@ -68,7 +68,7 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
             currentRowIndex++;
         }
         else if (cmd.type === 'tkzTabVar') {
-            checkRowCount(currentRowIndex, maxRowIndex);
+            checkRowCount(currentRowIndex, maxRowIndex,cmd.line,cmd.column);
             const result = processTkzTabVar(cmd, currentRowIndex, rowBoundaries, config);
             columnSeparators.push(...result.columnSeparators);
             columnSeparatorLabels.push(...result.columnSeparatorLabels);
