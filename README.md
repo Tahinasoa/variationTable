@@ -44,6 +44,7 @@ The engine follows a three-stage pipeline:
 ### Basic Usage
 
 ```tsx
+import 'katex/dist/katex.min.css'; 
 import {VariationTable} from '@variation/core'
 
 const MyComponent = () => {
