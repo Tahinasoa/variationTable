@@ -18,7 +18,6 @@ export function calculateLayout(ast: TkzTabDocument, defaultLayoutConfig: Layout
     }
 
     const init: TkzTabInit = ast.body[0];
-    console.log(init) ;
     if (init.rows.length === 0) {
         throw new Error(makeErrMsg({ line: init.line, column: init.column, msg: "tkzTabInit must define at least one row" }));
     }
