@@ -3,6 +3,7 @@ import Editor from './Editor';
 import { useEffect, useState } from 'react';
 import { examples } from './examples';
 import { ThemeToggle } from './ThemeToggle';
+import "tkz-tab-react/style.css";
 import 'katex/dist/katex.min.css'; 
 
 function App() {

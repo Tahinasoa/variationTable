@@ -46,7 +46,7 @@ The engine follows a three-stage pipeline:
 ```tsx
 import "tkz-tab-react/style.css";
 import 'katex/dist/katex.min.css'; 
-import {VariationTable} from '@variation/core'
+import {VariationTable} from 'tkz-tab-react'
 
 const MyComponent = () => {
   const latexCode = `\\begin{tikzpicture} ... \\end{tikzpicture}`;

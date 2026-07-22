@@ -12,7 +12,6 @@ Living list of open work: known issues, pending tasks, and planned improvements.
 |:---|:---|:---|:---|:---|
 | #07 | Packaging | Low | Todo | SVG `id` collision — `<marker>`/`<pattern>` ids are global, not scoped by `<svg>` nesting; breaks with 2+ instances on one page |
 | #09 | Packaging | Medium | Todo | Global side-effect import of `katex.min.css` — no scoping, potential duplication/version conflicts with host app |
-| #10 | Packaging | Medium | Todo | CSS Modules must be pre-compiled before publishing — consumer's bundler can't be assumed to process `.module.css` |
 
 *see: [`ARCHITECTURE.md : item 1`](./ARCHITECTURE.md)*
 
