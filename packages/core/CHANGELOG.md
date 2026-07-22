@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format loosely follows 
 This file is append-only: once an entry is added, it is not edited or removed. Corrections are recorded as new entries.
 
 ---
+## [0.2.0]
+* `2026-07-22` first release with version 0.2.0
+
 
 ## [Unreleased]
 
