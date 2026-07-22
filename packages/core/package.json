@@ -1,22 +1,42 @@
 {
-  "name": "@variation/core",
+  "name": "tkz-tab-react",
   "version": "0.2.0",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./dist/variation-table.cjs",
+  "type":"module",
+  "module": "./dist/variation-table.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "src"
+    "dist"
   ],
   "scripts": {
-    "build-parser": "peggy --format es --output src/parser/parser.mjs src/parser/parserGammar.peggy"
+    "prebuild": "npm run build-parser",
+    "build-parser": "peggy --format es --output src/parser/parser.mjs src/parser/parserGrammar.peggy",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "katex": "^0.16.33",
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
-  },
+"peerDependencies": {
+  "katex": ">=0.16.33",
+  "react": ">=18.0.0",
+  "react-dom": ">=18.0.0"
+},
   "devDependencies": {
-    "peggy": "^5.0.6",
     "@types/react": "18.3.x",
-    "@types/react-dom": "18.3.x"
-  }
+    "@types/react-dom": "18.3.x",
+    "peggy": "^5.0.6",
+    "@vitejs/plugin-react": "^5",
+    "vite": "^7",
+    "typescript": "^5",
+    "vite-plugin-dts": "^5.0.3"
+  },
+
+  "exports": {
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/variation-table.js",
+    "require": "./dist/variation-table.cjs"
+  },
+  "./style.css" : "./dist/variation-table.css"
+}
 }

@@ -1,4 +1,4 @@
-import {VariationTable} from '@variation/core'
+import {VariationTable} from 'tkz-tab-react'
 import Editor from './Editor';
 import { useEffect, useState } from 'react';
 import { examples } from './examples';
