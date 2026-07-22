@@ -20,7 +20,8 @@
     "codemirror-lang-latex": "^0.4.1",
     "katex": "^0.16.33",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "tkz-tab-react" : "0.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

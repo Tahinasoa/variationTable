@@ -4,9 +4,9 @@
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {
-    "build": "npm run build --workspace=packages/demo"
-  },
+"scripts": {
+  "build": "npm run build --workspace=packages/core && npm run build --workspace=packages/demo"
+},
   "devDependencies": {
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",

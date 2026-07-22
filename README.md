@@ -39,14 +39,24 @@ The engine follows a three-stage pipeline:
 
 ### Installation
 
-*Coming soon to npm.*
+```bash
+# npm
+npm install tkz-tab-react
+
+# yarn
+yarn add tkz-tab-react
+
+# pnpm
+pnpm add tkz-tab-react
+```
+
 
 ### Basic Usage
 
 ```tsx
 import "tkz-tab-react/style.css";
 import 'katex/dist/katex.min.css'; 
-import {VariationTable} from '@variation/core'
+import {VariationTable} from 'tkz-tab-react'
 
 const MyComponent = () => {
   const latexCode = `\\begin{tikzpicture} ... \\end{tikzpicture}`;

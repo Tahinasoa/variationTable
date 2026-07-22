@@ -6,6 +6,11 @@ This file is append-only: once an entry is added, it is not edited or removed. C
 
 ---
 ## [0.2.0]
+#Fixed
+
+* `2026-07-22` **10** (Packaging,Medium) CSS Modules must be pre-compiled before publishing — consumer's bundler can't be assumed to process `.module.css` |
+
+#released
 * `2026-07-22` first release with version 0.2.0
 
 
