@@ -39,7 +39,17 @@ The engine follows a three-stage pipeline:
 
 ### Installation
 
-*Coming soon to npm.*
+```bash
+# npm
+npm install tkz-tab-react
+
+# yarn
+yarn add tkz-tab-react
+
+# pnpm
+pnpm add tkz-tab-react
+```
+
 
 ### Basic Usage
 
