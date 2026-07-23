@@ -39,23 +39,24 @@ The engine follows a three-stage pipeline:
 
 ### Installation
 
-```bash
+`VariationTable` uses [KaTeX](https://katex.org/) to render math, but does not bundle it — you need to install it alongside as a peer dependency:
+
+```Bash
 # npm
-npm install tkz-tab-react
+npm install tkz-tab-react katex
 
 # yarn
-yarn add tkz-tab-react
+yarn add tkz-tab-react katex
 
 # pnpm
-pnpm add tkz-tab-react
+pnpm add tkz-tab-react katex
 ```
-
 
 ### Basic Usage
 
 ```tsx
 import "tkz-tab-react/style.css";
-import 'katex/dist/katex.min.css'; 
+import 'katex/dist/katex.min.css'; // required — see Installation
 import {VariationTable} from 'tkz-tab-react'
 
 const MyComponent = () => {
@@ -77,6 +78,7 @@ Theme can be `light` or `dark` and is optional.
 * **Error Handling:** Unlike `tkz-tab`, which can fail silently or render broken outputs, it explicitly throws descriptive error messages pinpointing the source of failure.
 * **Line Breaks:** It does not support raw `\\` line breaks outside of math mode (`$...$`).
 * **Math Rendering:** It uses KaTeX to render mathematical expressions; please refer to the [KaTeX Supported Features](https://katex.org/docs/supported.html) for valid commands.
+* **Peer dependencies:** requires `react`/`react-dom` ≥18 and `katex` installed separately in your project (not bundled).
 
 
 ## 📈 To Do
